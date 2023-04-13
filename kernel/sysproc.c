@@ -154,3 +154,16 @@ sys_trace(void)
   myproc()->tmask = mask;
   return 0;
 }
+//lzq
+uint64
+sys_brk(void){
+    int addr, pos;
+    if(argint(0, &pos) <0 )
+        return -1;
+    addr = myproc()->sz;
+    // Linux brk(0) return 0, but different in this work
+    if(pos == 0) return addr;
+    if(growproc(pos - addr) < 0)
+        panic("growproc error");
+    return 0;
+}

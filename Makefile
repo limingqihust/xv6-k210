@@ -229,6 +229,7 @@ fs: $(UPROGS)
 	@for file in $$( ls $U/_* ); do \
 		sudo cp $$file $(dst)/$${file#$U/_};\
 		sudo cp $$file $(dst)/bin/$${file#$U/_}; done
+	@sudo cp -r ../testsuits-for-oskernel/riscv-syscalls-testing/user/build/riscv64/* $(dst)
 	@sudo umount $(dst)
 
 # Write mounted sdcard

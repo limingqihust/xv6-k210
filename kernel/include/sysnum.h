@@ -3,7 +3,7 @@
 
 // System call numbers
 #define SYS_fork         1
-#define SYS_exit         2
+#define SYS_exit         93 //lzq
 #define SYS_wait         3
 #define SYS_pipe         4
 #define SYS_read         5
@@ -17,7 +17,7 @@
 #define SYS_sleep       13
 #define SYS_uptime      14
 #define SYS_open        15
-#define SYS_write       16
+#define SYS_write       64 //lzq
 #define SYS_remove      17
 #define SYS_trace       18
 #define SYS_sysinfo     19
@@ -28,5 +28,8 @@
 #define SYS_readdir     24
 #define SYS_getcwd      25
 #define SYS_rename      26
-
+// lzq
+#define SYS_brk         214
+#define SYS_munmap      215
+#define SYS_mmap        222
 #endif
