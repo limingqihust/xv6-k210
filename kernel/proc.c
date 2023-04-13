@@ -796,3 +796,8 @@ procnum(void)
   return num;
 }
 
+
+int 
+clone(int (*fn)(void *), void *child_stack,
+          int flags, void *arg, ...
+          /* pid_t *ptid, struct user_desc *tls, pid_t *ctid */ );

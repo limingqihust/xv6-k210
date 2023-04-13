@@ -117,6 +117,11 @@ extern uint64 sys_trace(void);
 extern uint64 sys_sysinfo(void);
 extern uint64 sys_rename(void);
 
+
+// added by lmq
+extern uint64 sys_clone(void);
+
+
 static uint64 (*syscalls[])(void) = {
   [SYS_fork]        sys_fork,
   [SYS_exit]        sys_exit,
@@ -144,6 +149,8 @@ static uint64 (*syscalls[])(void) = {
   [SYS_trace]       sys_trace,
   [SYS_sysinfo]     sys_sysinfo,
   [SYS_rename]      sys_rename,
+  // added by lmq
+  [SYS_clone]       sys_clone,
 };
 
 static char *sysnames[] = {
@@ -173,6 +180,9 @@ static char *sysnames[] = {
   [SYS_trace]       "trace",
   [SYS_sysinfo]     "sysinfo",
   [SYS_rename]      "rename",
+
+  // added by lmq
+  [SYS_clone]       "clone",
 };
 
 void

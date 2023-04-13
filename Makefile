@@ -6,6 +6,9 @@ K=kernel
 U=xv6-user
 T=target
 
+# added by lmq
+TEST=riscv64
+
 OBJS =
 ifeq ($(platform), k210)
 OBJS += $K/entry_k210.o
@@ -138,6 +141,7 @@ QEMUOPTS += -bios $(RUSTSBI)
 
 # import virtual disk image
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0 
+# QEMUOPTS += -drive file=riscv64-rootfs.img,if=none,format=raw,id=x0 
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 run: build
@@ -204,8 +208,7 @@ UPROGS=\
 	$U/_usertests\
 	$U/_strace\
 	$U/_mv\
-
-	# $U/_forktest\
+	$U/_forktest\
 	# $U/_ln\
 	# $U/_stressfs\
 	# $U/_grind\
@@ -229,6 +232,9 @@ fs: $(UPROGS)
 	@for file in $$( ls $U/_* ); do \
 		sudo cp $$file $(dst)/$${file#$U/_};\
 		sudo cp $$file $(dst)/bin/$${file#$U/_}; done
+# added by lmq
+	@for file in 'ls $(TEST)';do\
+		sudo cp -r $(TEST)/$(file) $(dst)/$(file) ; done
 	@sudo umount $(dst)
 
 # Write mounted sdcard
@@ -242,6 +248,7 @@ sdcard: userprogs
 
 clean: 
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
+	rm -f fs.img \
 	*/*.o */*.d */*.asm */*.sym \
 	$T/* \
 	$U/initcode $U/initcode.out \

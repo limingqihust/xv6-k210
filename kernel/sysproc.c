@@ -154,3 +154,43 @@ sys_trace(void)
   myproc()->tmask = mask;
   return 0;
 }
+
+
+// added by lmq
+// create a child process
+// input:
+// flags:signal
+// stack:stack of new process
+// ptid:id of parent thread
+// tls:TLS线程本地存储描述符
+// ctid:id of child process
+// ret:thread id of child process,-1 if fail
+
+uint64
+sys_clone(void)
+{
+  int flags,stack,ptid,tls,ctid;
+  if(argint(0, &flags) < 0) {
+    return -1;
+  }
+  if(argint(0, &stack) < 0) {
+    return -1;
+  }
+  if(argint(0, &ptid) < 0) {
+    return -1;
+  }
+  if(argint(0, &tls) < 0) {
+    return -1;
+  }
+  if(argint(0, &ctid) < 0) {
+    return -1;
+  }
+  
+  // clone();
+  
+
+
+  return 0;
+
+
+}
