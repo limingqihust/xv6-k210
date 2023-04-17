@@ -154,7 +154,8 @@ sys_trace(void)
   myproc()->tmask = mask;
   return 0;
 }
-//lzq
+// sysmem lzq
+
 uint64
 sys_brk(void){
     int addr, pos;
@@ -167,3 +168,5 @@ sys_brk(void){
         panic("growproc error");
     return 0;
 }
+
+uint64

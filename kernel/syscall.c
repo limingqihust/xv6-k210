@@ -117,6 +117,8 @@ extern uint64 sys_trace(void);
 extern uint64 sys_sysinfo(void);
 extern uint64 sys_rename(void);
 extern uint64 sys_brk(void);
+extern uint64 sys_munmap(void);
+extern uint64 sys_mmap(void);
 
 static uint64 (*syscalls[])(void) = {
   [SYS_fork]        sys_fork,
@@ -145,10 +147,10 @@ static uint64 (*syscalls[])(void) = {
   [SYS_trace]       sys_trace,
   [SYS_sysinfo]     sys_sysinfo,
   [SYS_rename]      sys_rename,
-  [SYS_brk]         sys_brk
+  [SYS_brk]         sys_brk,
+  [SYS_mmap]        sys_mmap,
+  [SYS_munmap]      sys_munmap,
 };
-//[SYS_munmap]      sys_munmap,
-//[SYS_mmap]        sys_mmap
 
 static char *sysnames[] = {
   [SYS_fork]        "fork",
@@ -177,6 +179,7 @@ static char *sysnames[] = {
   [SYS_trace]       "trace",
   [SYS_sysinfo]     "sysinfo",
   [SYS_rename]      "rename",
+  [SYS_brk]         "brk",
 };
 
 void
