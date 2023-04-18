@@ -10,7 +10,8 @@
 #include "include/kalloc.h"
 #include "include/string.h"
 #include "include/printf.h"
-
+//lzq
+#include "include/vm.h"
 extern int exec(char *path, char **argv);
 
 uint64
@@ -154,19 +155,73 @@ sys_trace(void)
   myproc()->tmask = mask;
   return 0;
 }
-// sysmem lzq
 
+// added by lmq
+// create a child process
+// input:
+// flags:signal
+// stack:stack of new process
+// ptid:id of parent thread
+// tls:TLS线程本地存储描述符
+// ctid:id of child process
+// ret:thread id of child process,-1 if fail
+
+uint64
+sys_clone(void)
+{
+  int flags,stack,ptid,tls,ctid;
+  if(argint(0, &flags) < 0) {
+    return -1;
+  }
+  if(argint(0, &stack) < 0) {
+    return -1;
+  }
+  if(argint(0, &ptid) < 0) {
+    return -1;
+  }
+  if(argint(0, &tls) < 0) {
+    return -1;
+  }
+  if(argint(0, &ctid) < 0) {
+    return -1;
+  }
+  
+  // clone();
+  return 0;
+}
+
+// (maybe)sysmem.c, below is all the Memory-related Code
+
+// sys_brk lzq
+// 将数据段addr 修改为 pos ， 成功则返回0
+// Linux brk(0) return 0, but different in this work this will return the now addr
 uint64
 sys_brk(void){
     int addr, pos;
     if(argint(0, &pos) <0 )
         return -1;
     addr = myproc()->sz;
-    // Linux brk(0) return 0, but different in this work
-    if(pos == 0) return addr;
+    if(pos == 0) return addr;//the diff with Linux brk(0)
     if(growproc(pos - addr) < 0)
         panic("growproc error");
     return 0;
 }
 
 uint64
+sys_mmap(void){
+    int start;//映射起始位置，
+    int len;
+    int prot;// 映射的内存保护方式，可取：PROT_EXEC, PROT_READ, PROT_WRITE, PROT_NONE
+    int flags;// 映射是否与其他进程共享的标志，
+    int fd;// 文件句柄，
+    int off;// 文件偏移量；
+    if(argint(0, &start) <0 )   return -1;
+    if(argint(1, &len) <0 )     return -1;
+    if(argint(2, &prot) <0 )    return -1;
+    if(argint(3, &flags) <0 )   return -1;
+    if(argint(4, &fd) <0 )      return -1;
+    if(argint(4, &off) <0 )     return -1;
+    mappages(myproc()->pagetable, len, fd, off);
+
+
+}

@@ -41,3 +41,5 @@ entry("remove");
 entry("trace");
 entry("sysinfo");
 entry("rename");
+# added by lmq
+entry("clone");
