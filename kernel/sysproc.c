@@ -209,19 +209,27 @@ sys_brk(void){
 
 uint64
 sys_mmap(void){
-    int start;//映射起始位置，
+    int addr;//映射起始位置，
     int len;
     int prot;// 映射的内存保护方式，可取：PROT_EXEC, PROT_READ, PROT_WRITE, PROT_NONE
     int flags;// 映射是否与其他进程共享的标志，
     int fd;// 文件句柄，
     int off;// 文件偏移量；
-    if(argint(0, &start) <0 )   return -1;
-    if(argint(1, &len) <0 )     return -1;
-    if(argint(2, &prot) <0 )    return -1;
-    if(argint(3, &flags) <0 )   return -1;
-    if(argint(4, &fd) <0 )      return -1;
-    if(argint(4, &off) <0 )     return -1;
-    mappages(myproc()->pagetable, len, fd, off);
 
+    if(argint(0, &addr) < 0 || argint(1, &len) < 0 || argint(2, &prot) < 0 ||
+       argint(3, &flags) < 0 || argint(4, &fd) < 0 || argint(5, &off) < 0)
+        return -1;
 
+    char *mem = kalloc();
+    memset(mem, 0, PGSIZE);
+    if (mappages(myproc()->pagetable, len, PGSIZE, (uint64)mem, PTE_W|PTE_X|PTE_R|PTE_U) != 0) {
+        kfree(mem);
+        return 0;
+    }
+    return addr;
+}
+
+uint64
+sys_munmap(void){
+    return  0;
 }

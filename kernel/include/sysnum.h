@@ -16,7 +16,7 @@
 #define SYS_sbrk        12
 #define SYS_sleep       13
 #define SYS_uptime      14
-#define SYS_open        15
+#define SYS_open        56
 #define SYS_write       64 //lzq
 #define SYS_remove      17
 #define SYS_trace       18
