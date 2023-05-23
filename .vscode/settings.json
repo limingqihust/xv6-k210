@@ -1,6 +1,17 @@
 {
     "files.associations": {
         "user.h": "c",
-        "cstdlib": "c"
-    }
+        "cstdlib": "c",
+        "limits": "c",
+        "types.h": "c",
+        "file.h": "c",
+        "stat.h": "c",
+        "fcntl.h": "c",
+        "assert.h": "c",
+        "string.h": "c",
+        "unistd.h": "c",
+        "stdio.h": "c",
+        "syscall.h": "c"
+    },
+    "cmake.configureOnOpen": false
 }

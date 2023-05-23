@@ -51,6 +51,15 @@ forktest(void)
 int
 main(void)
 {
-  forktest();
+  // forktest();
+  int cpid=fork();
+  if(cpid==0){
+    print("child\n");
+    exit(0);
+  }
+  else{
+    print("parent\n");
+    // wait(0);
+  }
   exit(0);
 }

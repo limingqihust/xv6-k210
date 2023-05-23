@@ -117,10 +117,23 @@ extern uint64 sys_trace(void);
 extern uint64 sys_sysinfo(void);
 extern uint64 sys_rename(void);
 
+// added by lmq for SYS_wait4
+extern uint64 sys_wait4(void);
 
-// added by lmq
+// added by lmq for SYS_clone
 extern uint64 sys_clone(void);
 
+// added by lmq for SYS_sched_yield
+extern uint64 sys_sched_yield(void);
+
+// added by lmq for SYS_getppid
+extern uint64 sys_getppid(void);
+
+// added by lmq for SYS_execve
+extern uint64 sys_execve(void);
+
+// added by lmq for SYS_openat
+extern uint64 sys_openat(void);
 
 static uint64 (*syscalls[])(void) = {
   [SYS_fork]        sys_fork,
@@ -149,8 +162,14 @@ static uint64 (*syscalls[])(void) = {
   [SYS_trace]       sys_trace,
   [SYS_sysinfo]     sys_sysinfo,
   [SYS_rename]      sys_rename,
+
   // added by lmq
   [SYS_clone]       sys_clone,
+  [SYS_wait4]       sys_wait4,
+  [SYS_sched_yield] sys_sched_yield,
+  [SYS_getppid]     sys_getppid,
+  [SYS_execve]      sys_execve,
+  [SYS_openat]      sys_openat,
 };
 
 static char *sysnames[] = {
@@ -183,6 +202,11 @@ static char *sysnames[] = {
 
   // added by lmq
   [SYS_clone]       "clone",
+  [SYS_wait4]       "wait4",
+  [SYS_sched_yield] "sched_yield",
+  [SYS_getppid]     "getppid",
+  [SYS_execve]      "execve",
+  [SYS_openat]      "openat",
 };
 
 void
