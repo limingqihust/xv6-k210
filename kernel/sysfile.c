@@ -494,3 +494,120 @@ fail:
     eput(src);
   return -1;
 }
+
+// added by lmq for SYS_openat
+uint64
+sys_openat(void)
+{
+  // 获取当前路径
+  struct dirent *de = myproc()->cwd;
+  char cur_path[FAT32_MAX_PATH];  // 当前目录
+  char *s;
+  int len;
+
+  if (de->parent == NULL) {
+    s = "/";
+  } 
+  else {
+    s = cur_path + FAT32_MAX_PATH - 1;
+    *s = '\0';
+    while (de->parent) {
+      len = strlen(de->filename);
+      s -= len;
+      if (s <= cur_path)          // can't reach root "/"
+        return -1;
+      strncpy(s, de->filename, len);
+      *--s = '/';
+      de = de->parent;
+    }
+  }
+  
+  
+  // 和相对路径拼接
+  char absolute_path[FAT32_MAX_PATH];
+  strncpy(absolute_path,s,strlen(s));
+
+  int fd,omode;
+  struct file *f;
+  struct dirent *ep;
+  char relative_path[FAT32_MAX_PATH];
+  if(argstr(1, relative_path, FAT32_MAX_PATH) < 0 || argint(2,&omode) < 0)
+    return -1;
+  
+
+  if(relative_path[0]=='.' && relative_path[1]=='/')
+  {
+    strncpy(absolute_path+strlen(absolute_path),
+            relative_path+1,
+            strlen(relative_path+1));
+  }
+  else if (relative_path[0]=='.' && relative_path[1]=='.')
+  {
+    panic("openat not support ..");
+  }
+  else
+  {
+    int absolute_path_old_len=strlen(absolute_path);
+    absolute_path[absolute_path_old_len]='/';
+    absolute_path[absolute_path_old_len+1]='\0';
+    strncpy(absolute_path+strlen(absolute_path),
+            relative_path,
+            strlen(relative_path));
+  }
+  // 根据路径名打开文件
+  if(omode & O_CREATE){                         // 创建文件
+    ep = create(absolute_path, T_FILE, omode);
+    if(ep == NULL){
+      return -1;
+    }
+  } 
+  // else if(omode & O_DIRECTORY)                  // 打开一个目录
+  // {
+  //   if((ep=ename(absolute_path))==NULL)         // 获取目录项
+  //   {
+  //     return -1;
+  //   }
+  //   elock(ep);
+  //   if(!(ep->attribute & ATTR_DIRECTORY))       // 该文件不是目录文件
+  //   {
+  //     eunlock(ep);
+  //     eput(ep);
+  //     return -1;
+  //   }
+  // }
+  else {
+    if((ep = ename(absolute_path)) == NULL){
+      return -1;
+    }
+    elock(ep);
+    if((ep->attribute & ATTR_DIRECTORY) && omode != O_RDONLY){
+      eunlock(ep);
+      eput(ep);
+      return -1;
+    }
+  }
+
+  
+  if((f = filealloc()) == NULL || (fd = fdalloc(f)) < 0){
+    if (f) {
+      fileclose(f);
+    }
+    eunlock(ep);
+    eput(ep);
+    return -1;
+  }
+
+  if(!(ep->attribute & ATTR_DIRECTORY) && (omode & O_TRUNC)){
+    etrunc(ep);
+  }
+
+  f->type = FD_ENTRY;
+  f->off = (omode & O_APPEND) ? ep->file_size : 0;
+  f->ep = ep;
+  f->readable = !(omode & O_WRONLY);
+  f->writable = (omode & O_WRONLY) || (omode & O_RDWR);
+
+  eunlock(ep);
+
+  return fd;
+}

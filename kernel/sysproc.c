@@ -144,7 +144,7 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
-
+    
 uint64
 sys_trace(void)
 {
@@ -166,6 +166,7 @@ sys_trace(void)
 // ctid:id of child process
 // ret:thread id of child process,-1 if fail
 
+// added by lmq for SYS_clone
 uint64
 sys_clone(void)
 {
@@ -173,19 +174,19 @@ sys_clone(void)
   if(argint(0, &flags) < 0) {
     return -1;
   }
-  if(argint(0, &stack) < 0) {
+  if(argint(1, &stack) < 0) {
     return -1;
   }
-  if(argint(0, &ptid) < 0) {
+  if(argint(2, &ptid) < 0) {
     return -1;
   }
-  if(argint(0, &tls) < 0) {
+  if(argint(3, &tls) < 0) {
     return -1;
   }
-  if(argint(0, &ctid) < 0) {
+  if(argint(4, &ctid) < 0) {
     return -1;
   }
-  
+
   // clone();
   return 0;
 }
@@ -229,7 +230,79 @@ sys_mmap(void){
     return addr;
 }
 
+//uint64
+//sys_munmap(void){
+//    return  0;
+//}
+//  return clone(flags,stack,ptid,tls,ctid); ???
+//}
+
+// added by lmq for SYS_wait4
 uint64
-sys_munmap(void){
-    return  0;
+sys_wait4(void)
+{
+  int cpid;             // child pid which current pid is waiting for
+  uint64 addr;          // addr of wstatus
+  argint(0,&cpid);
+  argaddr(1, &addr);
+  return waitpid(cpid,addr,0);
 }
+
+// added by lmq for SYS_sched_yield
+uint64
+sys_sched_yield(void)
+{
+  yield();
+  return 0;
+}
+
+// added by lmq for SYS_getppid
+uint64 
+sys_getppid(void)
+{
+  return myproc()->parent->pid;
+}
+
+// added by lmq for SYS_execve
+uint64
+sys_execve(void)
+{
+  char path[FAT32_MAX_PATH], *argv[MAXARG];
+  int i;
+  uint64 uargv, uarg;
+
+  if(argstr(0, path, FAT32_MAX_PATH) < 0 || argaddr(1, &uargv) < 0){
+    return -1;
+  }
+  memset(argv, 0, sizeof(argv));
+  for(i=0;; i++){
+    if(i >= NELEM(argv)){
+      goto bad;
+    }
+    if(fetchaddr(uargv+sizeof(uint64)*i, (uint64*)&uarg) < 0){
+      goto bad;
+    }
+    if(uarg == 0){
+      argv[i] = 0;
+      break;
+    }
+    argv[i] = kalloc();
+    if(argv[i] == 0)
+      goto bad;
+    if(fetchstr(uarg, argv[i], PGSIZE) < 0)
+      goto bad;
+
+  }
+  int ret = exec(path, argv);
+  for(i = 0; i < NELEM(argv) && argv[i] != 0; i++)
+    kfree(argv[i]);
+
+  return ret;
+
+ bad:
+  for(i = 0; i < NELEM(argv) && argv[i] != 0; i++)
+    kfree(argv[i]);
+  return -1;
+
+}
+

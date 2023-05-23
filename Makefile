@@ -7,7 +7,7 @@ U=xv6-user
 T=target
 
 # added by lmq
-TEST=riscv64
+TEST=test/build/riscv64
 
 OBJS =
 ifeq ($(platform), k210)
@@ -132,12 +132,16 @@ ifndef CPUS
 CPUS := 2
 endif
 
+# modified by lmq
 QEMUOPTS = -machine virt -kernel $T/kernel -m 8M -nographic
+# QEMUOPTS = -machine virt -kernel $T/kernel -m 128M -nographic
 
 # use multi-core 
 QEMUOPTS += -smp $(CPUS)
 
+# modified by lmq
 QEMUOPTS += -bios $(RUSTSBI)
+# QEMUOPTS += -bios none
 
 # import virtual disk image
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0 
@@ -209,6 +213,8 @@ UPROGS=\
 	$U/_strace\
 	$U/_mv\
 	$U/_forktest\
+	# $U/_wait\
+	# $U/_fork\
 	# $U/_ln\
 	# $U/_stressfs\
 	# $U/_grind\
@@ -232,7 +238,7 @@ fs: $(UPROGS)
 	@for file in $$( ls $U/_* ); do \
 		sudo cp $$file $(dst)/$${file#$U/_};\
 		sudo cp $$file $(dst)/bin/$${file#$U/_}; done
-	@sudo cp -r ../testsuits-for-oskernel/riscv-syscalls-testing/user/build/riscv64/* $(dst)
+#	@sudo cp -r ../testsuits-for-oskernel/riscv-syscalls-testing/user/build/riscv64/* $(dst)
 # added by lmq
 	@for file in 'ls $(TEST)';do\
 		sudo cp -r $(TEST)/$(file) $(dst)/$(file) ; done

@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/stdio.h
+
+/home/lzq/Desktop/oscomp/test/src/oscomp/test_echo.c
+stdio.h
+/home/lzq/Desktop/oscomp/test/src/oscomp/stdio.h
+
