@@ -697,3 +697,21 @@ sys_mkdirat(void)
   return 0;
 }
 
+// added by lmq for SYS_dup3
+uint64
+sys_dup3(void)
+{
+  struct file *f;
+  int new_fd;
+  struct proc* p=myproc();
+
+  if(argfd(0, 0, &f) < 0 || argint(1,&new_fd)<0)
+    return -1;
+  if(p->ofile[new_fd]!=0)        // 文件描述符[new_fd]已被占用
+  {
+    return -1;
+  }
+  p->ofile[new_fd] = f;
+  filedup(f);
+  return new_fd;
+}
