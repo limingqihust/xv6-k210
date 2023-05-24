@@ -715,3 +715,95 @@ sys_dup3(void)
   filedup(f);
   return new_fd;
 }
+
+// added by lmq for SYS_getdents64
+struct linux_dirent64 {
+  uint64          d_ino;	    // 索引结点号    
+  long long int   d_off;	    // 到下一个dirent的偏移    
+  unsigned short  d_reclen;	  // 当前dirent的长度    
+  unsigned char   d_type;	    // 文件类型    
+  char            d_name[];	  // 文件名
+};
+uint64 
+sys_getdents64(void)
+{
+  int fd,len;
+  struct file* f;
+  struct linux_dirent64* dirp64;
+
+  if(argfd(0,&fd,&f)<0 || argaddr(1,(uint64*)&dirp64)<0 || argint(2,&len))
+  {
+    return -1;
+  }
+  int filename_len=strlen(f->ep->filename);
+  if(filename_len>len)
+  {
+    return -1;
+  }
+  if(copyout2((uint64)dirp64->d_name, f->ep->filename, filename_len) < 0 ||
+    copyout2((uint64)&(dirp64->d_type),(char*)&f->type,sizeof(f->type) < 0 ))
+    return -1;
+
+  return filename_len;
+}
+
+
+// added by lmq for SYS_fstat
+typedef unsigned int mode_t;
+typedef long int off_t;
+struct kstat {
+        uint64 st_dev;
+        uint64 st_ino;
+        mode_t st_mode;
+        uint32 st_nlink;
+        uint32 st_uid;
+        uint32 st_gid;
+        uint64 st_rdev;
+        unsigned long __pad;
+        off_t st_size;
+        uint32 st_blksize;
+        int __pad2;
+        uint64 st_blocks;
+        long st_atime_sec;
+        long st_atime_nsec;
+        long st_mtime_sec;
+        long st_mtime_nsec;
+        long st_ctime_sec;
+        long st_ctime_nsec;
+        unsigned __unused[2];
+};
+uint64
+sys_fstat_cscc(void)
+{
+  struct file* f;
+  uint64 addr;
+  if(argfd(0,0,&f)<0 || argaddr(1,&addr)<0)
+  {
+    return -1;
+  }
+
+  struct kstat st;
+  if(f->type!=FD_ENTRY)
+    return -1;
+  elock(f->ep);
+  st.st_dev=f->ep->dev;
+  st.st_ino=0;
+  st.st_mode=f->type;
+  st.st_nlink=f->ref;
+  st.st_gid=0;
+  st.st_uid=0;
+  st.st_rdev=0;
+  st.st_size=f->ep->file_size;
+  st.st_blocks=0;
+  st.st_blksize=0;
+  st.st_atime_sec=0;
+  st.st_atime_nsec=0;
+  st.st_mtime_nsec=0;
+  st.st_mtime_sec=0;
+  st.st_ctime_nsec=0;
+  st.st_ctime_sec=0;
+  eunlock(f->ep);
+  if((copyout2(addr,(char*)&st,sizeof(struct kstat)))<0)
+    return -1;
+  return 0;
+}

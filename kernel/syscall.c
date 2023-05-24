@@ -130,6 +130,8 @@ extern uint64 sys_execve(void);
 extern uint64 sys_openat(void);
 extern uint64 sys_mkdirat(void);
 extern uint64 sys_dup3(void);
+extern uint64 sys_getdents64(void);
+extern uint64 sys_fstat_cscc(void);
 
 static uint64 (*syscalls[])(void) = {
   [SYS_fork]        sys_fork,
@@ -172,6 +174,8 @@ static uint64 (*syscalls[])(void) = {
   [SYS_openat]      sys_openat,
   [SYS_mkdirat]     sys_mkdirat,
   [SYS_dup3]        sys_dup3,
+  [SYS_getdents64]  sys_getdents64,
+  [SYS_fstat_cscc]  sys_fstat_cscc,
 };
 
 static char *sysnames[] = {
@@ -212,6 +216,8 @@ static char *sysnames[] = {
   [SYS_openat]      "openat",
   [SYS_mkdirat]     "mkdirat",
   [SYS_dup3]        "dup3",
+  [SYS_getdents64]  "getdents64",
+  [SYS_fstat_cscc]  "fstat_cscc",
 };
 
 void

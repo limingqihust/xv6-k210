@@ -38,6 +38,8 @@
 #define SYS_pipe        59
 #define SYS_dup         23
 #define SYS_dup3        24
+#define SYS_getdents64  61  
+#define SYS_fstat_cscc  80
 
 // lzq
 #define SYS_brk         214

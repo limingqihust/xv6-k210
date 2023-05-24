@@ -197,7 +197,6 @@ int mkdir(const char *path, mode_t mode){
 }
 
 int getdents(int fd, struct linux_dirent64 *dirp64, unsigned long len){
-    //return syscall(SYS_getdents64, fd, dirp64, len);
     return syscall(SYS_getdents64, fd, dirp64, len);
 }
 
