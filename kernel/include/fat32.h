@@ -23,6 +23,9 @@
 #define FAT32_MAX_PATH      260
 #define ENTRY_CACHE_NUM     50
 
+// added by lmq for SYS_openat
+#define AT_FDCWD           (-100)
+
 struct dirent {
     char  filename[FAT32_MAX_FILENAME + 1];
     uint8   attribute;

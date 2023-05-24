@@ -156,15 +156,7 @@ sys_trace(void)
   return 0;
 }
 
-// added by lmq
-// create a child process
-// input:
-// flags:signal
-// stack:stack of new process
-// ptid:id of parent thread
-// tls:TLS线程本地存储描述符
-// ctid:id of child process
-// ret:thread id of child process,-1 if fail
+
 
 // added by lmq for SYS_clone
 uint64
@@ -187,8 +179,8 @@ sys_clone(void)
     return -1;
   }
 
-  // clone();
-  return 0;
+  int new_pid=clone(flags,stack,ptid,tls,ctid);
+  return new_pid;
 }
 
 // (maybe)sysmem.c, below is all the Memory-related Code

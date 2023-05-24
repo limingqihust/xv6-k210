@@ -120,24 +120,15 @@ extern uint64 sys_rename(void);
 extern uint64 sys_brk(void);
 //extern uint64 sys_munmap(void);
 extern uint64 sys_mmap(void);
+
 // added by lmq
-// added by lmq for SYS_wait4
 extern uint64 sys_wait4(void);
-
-// added by lmq for SYS_clone
 extern uint64 sys_clone(void);
-
-// added by lmq for SYS_sched_yield
 extern uint64 sys_sched_yield(void);
-
-// added by lmq for SYS_getppid
 extern uint64 sys_getppid(void);
-
-// added by lmq for SYS_execve
 extern uint64 sys_execve(void);
-
-// added by lmq for SYS_openat
 extern uint64 sys_openat(void);
+extern uint64 sys_mkdirat(void);
 
 static uint64 (*syscalls[])(void) = {
   [SYS_fork]        sys_fork,
@@ -170,6 +161,7 @@ static uint64 (*syscalls[])(void) = {
   [SYS_brk]         sys_brk,
   [SYS_mmap]        sys_mmap,
 //  [SYS_munmap]      sys_munmap,
+
   // added by lmq
   [SYS_clone]       sys_clone,
   [SYS_wait4]       sys_wait4,
@@ -177,6 +169,7 @@ static uint64 (*syscalls[])(void) = {
   [SYS_getppid]     sys_getppid,
   [SYS_execve]      sys_execve,
   [SYS_openat]      sys_openat,
+  [SYS_mkdirat]     sys_mkdirat,
 };
 
 static char *sysnames[] = {
@@ -215,6 +208,7 @@ static char *sysnames[] = {
   [SYS_getppid]     "getppid",
   [SYS_execve]      "execve",
   [SYS_openat]      "openat",
+  [SYS_mkdirat]     "mkdirat",
 };
 
 void

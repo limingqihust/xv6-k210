@@ -93,7 +93,6 @@ sys_write(void)
 
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argaddr(1, &p) < 0)
     return -1;
-
   return filewrite(f, p, n);
 }
 
@@ -218,7 +217,7 @@ sys_mkdir(void)
   char path[FAT32_MAX_PATH];
   struct dirent *ep;
 
-  if(argstr(0, path, FAT32_MAX_PATH) < 0 || (ep = create(path, T_DIR, 0)) == 0){
+  if(argstr(1, path, FAT32_MAX_PATH) < 0 || (ep = create(path, T_DIR, 0)) == 0){
     return -1;
   }
   eunlock(ep);
@@ -361,7 +360,7 @@ sys_getcwd(void)
   if (copyout2(addr, s, strlen(s) + 1) < 0)
     return -1;
   
-  return 0;
+  return addr;
 
 }
 
@@ -499,12 +498,20 @@ fail:
 uint64
 sys_openat(void)
 {
-  // 获取当前路径
+  int dirfd;
+  if(argint(0, &dirfd) < 0)
+    return -1;
   struct dirent *de = myproc()->cwd;
-  char cur_path[FAT32_MAX_PATH];  // 当前目录
-  char *s;
+  if(dirfd!=AT_FDCWD)
+  {
+    de=myproc()->ofile[dirfd]->ep;
+  }
+  char cur_path[FAT32_MAX_PATH];  // openat工作目录 可以为当前目录 也可以被指定
+  memset(cur_path,0,FAT32_MAX_PATH);
+  char* s=NULL;
   int len;
 
+  // 获得openat工作目录路径
   if (de->parent == NULL) {
     s = "/";
   } 
@@ -522,9 +529,9 @@ sys_openat(void)
     }
   }
   
-  
-  // 和相对路径拼接
+  // 获得openat的文件路径 openat工作目录+相对路径
   char absolute_path[FAT32_MAX_PATH];
+  memset(absolute_path,0,FAT32_MAX_PATH);
   strncpy(absolute_path,s,strlen(s));
 
   int fd,omode;
@@ -534,18 +541,22 @@ sys_openat(void)
   if(argstr(1, relative_path, FAT32_MAX_PATH) < 0 || argint(2,&omode) < 0)
     return -1;
   
-
-  if(relative_path[0]=='.' && relative_path[1]=='/')
+  if(relative_path[0]=='/')                               // 为绝对路径 忽略dirfd
+  {
+    memset(absolute_path,0,FAT32_MAX_PATH);
+    strncpy(absolute_path,relative_path,strlen(relative_path));
+  }
+  else if(relative_path[0]=='.' && relative_path[1]=='/') // 为显式相对路径
   {
     strncpy(absolute_path+strlen(absolute_path),
             relative_path+1,
             strlen(relative_path+1));
   }
-  else if (relative_path[0]=='.' && relative_path[1]=='.')
+  else if (relative_path[0]=='.' && relative_path[1]=='.')// 显示相对路径 没有实现
   {
     panic("openat not support ..");
   }
-  else
+  else                                                    // 为隐式相对路径
   {
     int absolute_path_old_len=strlen(absolute_path);
     absolute_path[absolute_path_old_len]='/';
@@ -554,6 +565,7 @@ sys_openat(void)
             relative_path,
             strlen(relative_path));
   }
+
   // 根据路径名打开文件
   if(omode & O_CREATE){                         // 创建文件
     ep = create(absolute_path, T_FILE, omode);
@@ -561,20 +573,21 @@ sys_openat(void)
       return -1;
     }
   } 
-  // else if(omode & O_DIRECTORY)                  // 打开一个目录
-  // {
-  //   if((ep=ename(absolute_path))==NULL)         // 获取目录项
-  //   {
-  //     return -1;
-  //   }
-  //   elock(ep);
-  //   if(!(ep->attribute & ATTR_DIRECTORY))       // 该文件不是目录文件
-  //   {
-  //     eunlock(ep);
-  //     eput(ep);
-  //     return -1;
-  //   }
-  // }
+  else if(omode & O_DIRECTORY)                  // 打开一个目录
+  {
+    
+    if((ep=ename(absolute_path))==NULL)         // 获取目录项
+    {
+      return -1;
+    }
+    elock(ep);
+    if(!(ep->attribute & ATTR_DIRECTORY))       // 该文件不是目录文件
+    {
+      eunlock(ep);
+      eput(ep);
+      return -1;
+    }
+  }
   else {
     if((ep = ename(absolute_path)) == NULL){
       return -1;
@@ -601,6 +614,7 @@ sys_openat(void)
     etrunc(ep);
   }
 
+  // 设置权限
   f->type = FD_ENTRY;
   f->off = (omode & O_APPEND) ? ep->file_size : 0;
   f->ep = ep;
@@ -611,3 +625,75 @@ sys_openat(void)
 
   return fd;
 }
+
+
+// added by lmq for SYS_mkdirat
+uint64
+sys_mkdirat(void)
+{
+  int dirfd,omode;
+  char des_path[FAT32_MAX_PATH];
+  if(argint(0, &dirfd) < 0 || argstr(1,des_path,FAT32_MAX_PATH)<0 || argint(2,&omode)<0)
+    return -1;
+
+
+  // 如果dirfd不为AT_FDCWD 则获得dirfd的路径
+  char cur_path[FAT32_MAX_PATH];
+  memset(cur_path,0,FAT32_MAX_PATH);
+  char* s=NULL;
+  int len;
+  if(dirfd!=AT_FDCWD)
+  {
+    struct dirent* de=myproc()->ofile[dirfd]->ep;
+    if (de->parent == NULL) {
+      s = "/";
+    } 
+    else {
+      s = cur_path + FAT32_MAX_PATH - 1;
+      *s = '\0';
+      while (de->parent) {
+        len = strlen(de->filename);
+        s -= len;
+        if (s <= cur_path)          // can't reach root "/"
+          return -1;
+        strncpy(s, de->filename, len);
+        *--s = '/';
+        de = de->parent;
+      }
+    }
+    memset(cur_path,0,FAT32_MAX_PATH);
+    strncpy(cur_path,s,strlen(s));
+    if(des_path[0]!='/')
+    {
+      if(des_path[0]=='.' && des_path[1]=='/')
+      {
+        strncpy(cur_path+strlen(cur_path),des_path+1,strlen(des_path+1));
+        memset(des_path,0,FAT32_MAX_PATH);
+        strncpy(des_path,cur_path,strlen(cur_path));
+      }
+      else if(des_path[0]=='.' && des_path[1]=='.')
+      {
+        panic("mkdirat not support ..\n");
+      }
+      else
+      {
+        cur_path[strlen(cur_path)]='/';
+        strncpy(cur_path+strlen(cur_path),des_path,strlen(des_path));
+        memset(des_path,0,FAT32_MAX_PATH);
+        strncpy(des_path,cur_path,strlen(cur_path));
+      }
+    }
+    
+  }
+
+  struct dirent* ep;
+  if((ep = create(des_path, T_DIR, omode)) == 0)
+  {
+    return -1;
+  }
+
+  eunlock(ep);
+  eput(ep);
+  return 0;
+}
+

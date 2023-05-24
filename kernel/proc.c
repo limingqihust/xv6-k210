@@ -473,7 +473,7 @@ void exit(int status)
   wakeup1(original_parent);
 
   // p->xstate = status;
-  p->xstate=status<<8 | status;
+  p->xstate=status<<8;
   p->state = ZOMBIE;
 
   release(&original_parent->lock);
@@ -829,9 +829,7 @@ procnum(void)
 // added by lmq for SYS_clone
 int clone(int flags, int stack, int ptid, int tls, int ctid)
 {
-  printf("here\n");
   int new_pid = fork();
-  printf("here\n");
   return new_pid;
 }
 
