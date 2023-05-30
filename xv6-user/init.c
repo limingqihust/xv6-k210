@@ -39,6 +39,7 @@ main(void)
       wpid = wait((int *) 0);
       if(wpid == pid){
         // the shell exited; restart it.
+        exit(1);
         break;
       } else if(wpid < 0){
         printf("init: wait returned an error\n");

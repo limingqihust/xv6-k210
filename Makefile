@@ -150,7 +150,7 @@ QEMUOPTS += -bios default
 
 # import virtual disk image
 #QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
- QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0
+QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 # 自己的
