@@ -61,8 +61,8 @@ OBJS += \
 endif
 
 #modiefied by lmq for test online 
-# QEMU = qemu-system-riscv64
-QEMU = /usr/bin/qemu-system-riscv64
+QEMU = qemu-system-riscv64
+# QEMU = /usr/bin/qemu-system-riscv64
 
 
 ifeq ($(platform), k210)
@@ -113,8 +113,6 @@ $T/kernel: $(OBJS) $(linker) $U/initcode
 
 build: $T/kernel userprogs
 
-
-
 # Compile RustSBI
 RUSTSBI:
 ifeq ($(platform), k210)
@@ -145,8 +143,8 @@ QEMUOPTS = -machine virt -kernel $T/kernel -m 128M -nographic
 QEMUOPTS += -smp $(CPUS)
 
 # modified by lmq for test online
-QEMUOPTS += -bios $(RUSTSBI)
-# QEMUOPTS += -bios default
+# QEMUOPTS += -bios $(RUSTSBI)
+QEMUOPTS += -bios default
 
 # import virtual disk image
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0 
@@ -166,8 +164,8 @@ else
 	@$(QEMU) $(QEMUOPTS)
 endif
 
-# all: build
-# 	@$(QEMU) $(QEMUOPTS)
+all: build
+	@$(QEMU) $(QEMUOPTS)
 
 
 
