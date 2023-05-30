@@ -179,7 +179,7 @@ endif
 
 
 
-all: build fs
+all: build
 	@$(QEMU) $(QEMUOPTS)
 
 
