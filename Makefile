@@ -247,11 +247,11 @@ dst=/mnt
 # @sudo cp $U/_sh $(dst)/sh
 # Make fs image
 fs: $(UPROGS)
-	@if [ ! -f "fs.img" ]; then \
+	@if [ ! -f "sdcard.img" ]; then \
 		echo "making fs image..."; \
-		dd if=/dev/zero of=fs.img bs=512k count=512; \
-		mkfs.vfat -F 32 fs.img; fi
-	@sudo mount fs.img $(dst)
+		dd if=/dev/zero of=sdcard.img bs=512k count=512; \
+		mkfs.vfat -F 32 sdcard.img; fi
+	@sudo mount sdcard.img $(dst)
 	@if [ ! -d "$(dst)/bin" ]; then sudo mkdir $(dst)/bin; fi
 	@sudo cp README $(dst)/README
 	@for file in $$( ls $U/_* ); do \

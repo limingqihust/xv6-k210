@@ -280,11 +280,11 @@ main(void)
   getcwd(mycwd);
   char testcmd[30][25] = {"./sdcard_test/brk",
                           "./sdcard_test/fork",
-                          "./sdcard_test/open",
+                          "./sdcard_test/write",
                           "./sdcard_test/close"
                           };
 
-  for(int i=0; i<2; i++){
+  for(int i=0; i<4; i++){
       struct cmd *cmd = parsecmd(testcmd[i]);
       if(fork1() == 0){
           runcmd(cmd);
