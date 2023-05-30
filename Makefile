@@ -64,7 +64,6 @@ endif
 #modiefied by lmq for test online 
 QEMU = qemu-system-riscv64          		# 7.0.0
 #QEMU = /usr/local/bin/qemu-system-riscv64          		# 7.0.0          		# 7.0.0
-# QEMU = /usr/bin/qemu-system-riscv64  		# 4.2.0
 
 
 ifeq ($(platform), k210)
