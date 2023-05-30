@@ -7,7 +7,8 @@ U=xv6-user
 T=target
 
 # added by lmq
-TEST=test/build/riscv64
+#TEST=test/build/riscv64
+TEST=sdcard_test
 
 OBJS =
 ifeq ($(platform), k210)
@@ -148,8 +149,8 @@ QEMUOPTS += -smp $(CPUS)
 QEMUOPTS += -bios default
 
 # import virtual disk image
-QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0
-# QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0 
+#QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
+ QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 # 自己的
