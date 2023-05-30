@@ -56,13 +56,13 @@ OBJS += \
 else
 OBJS += \
   $K/virtio_disk.o \
-  #$K/uart.o \
+  $K/uart.o \
 
 endif
 
 #modiefied by lmq for test online 
-QEMU = qemu-system-riscv64
-# QEMU = /usr/bin/qemu-system-riscv64
+QEMU = qemu-system-riscv64          		# 7.0.0
+# QEMU = /usr/bin/qemu-system-riscv64  		# 4.2.0
 
 
 ifeq ($(platform), k210)
@@ -151,7 +151,7 @@ QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 # QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0 
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
-# modified for test online
+# 自己的
 run: build
 ifeq ($(platform), k210)
 	@$(OBJCOPY) $T/kernel --strip-all -O binary $(image)
@@ -163,6 +163,15 @@ ifeq ($(platform), k210)
 else
 	@$(QEMU) $(QEMUOPTS)
 endif
+
+
+# 别人的
+# run:build
+# 	@make platform=qemu
+# 	@qemu-system-riscv64 -machine virt -kernel $T/kernel -m 128M -nographic -smp 2 -bios default -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0 -no-reboot
+
+
+
 
 all: build
 	@$(QEMU) $(QEMUOPTS)
