@@ -133,8 +133,8 @@ CPUS := 2
 endif
 
 # modified by lmq
-QEMUOPTS = -machine virt -kernel $T/kernel -m 8M -nographic
-# QEMUOPTS = -machine virt -kernel $T/kernel -m 128M -nographic
+# QEMUOPTS = -machine virt -kernel $T/kernel -m 8M -nographic
+QEMUOPTS = -machine virt -kernel $T/kernel -m 128M -nographic
 
 # use multi-core 
 QEMUOPTS += -smp $(CPUS)
