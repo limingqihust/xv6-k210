@@ -118,8 +118,8 @@ extern uint64 sys_sysinfo(void);
 extern uint64 sys_rename(void);
 //added by lzq
 extern uint64 sys_brk(void);
-//extern uint64 sys_munmap(void);
 extern uint64 sys_mmap(void);
+extern uint64 sys_shutdown(void);
 
 // added by lmq
 extern uint64 sys_wait4(void);
@@ -164,6 +164,7 @@ static uint64 (*syscalls[])(void) = {
   [SYS_brk]         sys_brk,
   [SYS_mmap]        sys_mmap,
 //  [SYS_munmap]      sys_munmap,
+  [SYS_shutdown]    sys_shutdown,
 
   // added by lmq
   [SYS_exit_cscc]     sys_exit,
@@ -237,6 +238,7 @@ static char *sysnames[] = {
   [SYS_dup3]        "dup3",
   [SYS_getdents64]  "getdents64",
   [SYS_fstat_cscc]  "fstat_cscc",
+  [SYS_shutdown]    "shutdown"
 };
 
 void

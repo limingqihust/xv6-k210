@@ -3,6 +3,8 @@
 #include "kernel/include/types.h"
 #include "xv6-user/user.h"
 #include "kernel/include/fcntl.h"
+//lzq
+#include "kernel/include/sbi.h"
 
 // Parsed command representation
 #define EXEC  1
@@ -292,7 +294,7 @@ main(void)
       wait(0);
       free(cmd);
   }
-
+  shutdown();
 //  // Read and run input commands.
 //  while(getcmd(buf, sizeof(buf)) >= 0){
 //    replace(buf);

@@ -5,7 +5,8 @@
 #include "kernel/include/file.h"
 #include "kernel/include/fcntl.h"
 #include "xv6-user/user.h"
-
+// lzq
+#include "kernel/include/sbi.h"
 char *argv[] = { "sh", 0 };
 
 int
@@ -20,7 +21,8 @@ main(void)
   dev(O_RDWR, CONSOLE, 0);
   dup(0);  // stdout
   dup(0);  // stderr
-
+  sbi_shutdown();
+    printf("it should shutdown\n");
   for(;;){
     printf("init: starting sh\n");
     pid = fork();
@@ -39,7 +41,9 @@ main(void)
       wpid = wait((int *) 0);
       if(wpid == pid){
         // the shell exited; restart it.
-        exit(1);
+        exit(1); //shutdown？
+        sbi_shutdown();
+        printf("it should shutdown\n");
         break;
       } else if(wpid < 0){
         printf("init: wait returned an error\n");

@@ -12,6 +12,7 @@
 #include "include/printf.h"
 //lzq
 #include "include/vm.h"
+#include "include/sbi.h"
 extern int exec(char *path, char **argv);
 
 uint64
@@ -298,3 +299,7 @@ sys_execve(void)
 
 }
 
+uint64 sys_shutdown(){
+    sbi_shutdown();
+    return 0;
+}
