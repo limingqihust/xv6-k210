@@ -60,7 +60,10 @@ OBJS += \
 
 endif
 
-QEMU = qemu-system-riscv64
+#modiefied by lmq for test online 
+# QEMU = qemu-system-riscv64
+QEMU = /usr/bin/qemu-system-riscv64
+
 
 ifeq ($(platform), k210)
 RUSTSBI = ./bootloader/SBI/sbi-k210
@@ -133,19 +136,19 @@ CPUS := 2
 endif
 
 # modified by lmq
-# QEMUOPTS = -machine virt -kernel $T/kernel -m 8M -nographic
 QEMUOPTS = -machine virt -kernel $T/kernel -m 128M -nographic
+# QEMUOPTS = -machine virt -kernel $T/kernel -m 8M -nographic
 
 # use multi-core 
 QEMUOPTS += -smp $(CPUS)
 
-# modified by lmq
+# modified by lmq for test online
 QEMUOPTS += -bios $(RUSTSBI)
 # QEMUOPTS += -bios default
 
 # import virtual disk image
-# QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0 
-QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0 
+QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0 
+# QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0 
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 run: build
@@ -241,7 +244,6 @@ fs: $(UPROGS)
 	@for file in $$( ls $U/_* ); do \
 		sudo cp $$file $(dst)/$${file#$U/_};\
 		sudo cp $$file $(dst)/bin/$${file#$U/_}; done
-#	@sudo cp -r ../testsuits-for-oskernel/riscv-syscalls-testing/user/build/riscv64/* $(dst)
 # added by lmq
 	@for file in 'ls $(TEST)';do\
 		sudo cp -r $(TEST)/$(file) $(dst)/$(file) ; done
