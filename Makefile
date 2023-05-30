@@ -263,8 +263,9 @@ fs: $(UPROGS)
 #		sudo cp $$file $(dst)/$${file#$U/_};\
 		sudo cp $$file $(dst)/bin/$${file#$U/_}; done
 # added by lmq
-	for file in $(ls $(TEST)) ;do\
-		sudo cp -r $(TEST)/$(file) $(dst)/$(file) ; done
+	for file in $(TEST)/* ;do\
+		echo "$(file)"
+		sudo cp -r $(TEST)/$(file) $(dst)/ ; done
 	@sudo umount $(dst)
 
 # Write mounted sdcard
