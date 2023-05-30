@@ -278,8 +278,7 @@ main(void)
 
   //added by lzq
   getcwd(mycwd);
-  char testcmd[30][25] = {"brk",
-
+  char testcmd[30][25] = {"./sdcard_test/brk",
                           "brk"};
 
   for(int i=0; i<2; i++){
