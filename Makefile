@@ -1,5 +1,5 @@
-platform	:= k210
-#platform	:= qemu
+# platform	:= k210
+platform	:= qemu
 # mode := debug
 mode := release
 K=kernel
@@ -107,7 +107,7 @@ $T/kernel: $(OBJS) $(linker) $U/initcode
 	@$(LD) $(LDFLAGS) -T $(linker) -o $T/kernel $(OBJS)
 	@$(OBJDUMP) -S $T/kernel > $T/kernel.asm
 	@$(OBJDUMP) -t $T/kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $T/kernel.sym
-  
+
 build: $T/kernel userprogs
 
 # Compile RustSBI
@@ -141,11 +141,11 @@ QEMUOPTS += -smp $(CPUS)
 
 # modified by lmq
 QEMUOPTS += -bios $(RUSTSBI)
-# QEMUOPTS += -bios none
+# QEMUOPTS += -bios default
 
 # import virtual disk image
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0 
-# QEMUOPTS += -drive file=riscv64-rootfs.img,if=none,format=raw,id=x0 
+# QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0 
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 run: build
@@ -159,6 +159,9 @@ ifeq ($(platform), k210)
 else
 	@$(QEMU) $(QEMUOPTS)
 endif
+
+all: build
+	@$(QEMU) $(QEMUOPTS)
 
 $U/initcode: $U/initcode.S
 	$(CC) $(CFLAGS) -march=rv64g -nostdinc -I. -Ikernel -c $U/initcode.S -o $U/initcode.o

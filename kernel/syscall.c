@@ -166,16 +166,26 @@ static uint64 (*syscalls[])(void) = {
 //  [SYS_munmap]      sys_munmap,
 
   // added by lmq
+  [SYS_exit_cscc]     sys_exit,
+  [SYS_pipe_cscc]   sys_pipe,
+  [SYS_getpid_cscc] sys_getpid,
   [SYS_clone]       sys_clone,
   [SYS_wait4]       sys_wait4,
   [SYS_sched_yield] sys_sched_yield,
-  [SYS_getppid]     sys_getppid,
   [SYS_execve]      sys_execve,
+  [SYS_getppid]     sys_getppid,
+  [SYS_close_cscc]  sys_close,
+  [SYS_read_cscc]   sys_read,
+  [SYS_write_cscc]  sys_write,
   [SYS_openat]      sys_openat,
   [SYS_mkdirat]     sys_mkdirat,
+  [SYS_chdir_cscc]  sys_chdir,
+  [SYS_getcwd_cscc] sys_getcwd,
+  [SYS_dup_cscc]    sys_dup,
   [SYS_dup3]        sys_dup3,
   [SYS_getdents64]  sys_getdents64,
   [SYS_fstat_cscc]  sys_fstat_cscc,
+  
 };
 
 static char *sysnames[] = {
@@ -208,13 +218,22 @@ static char *sysnames[] = {
   // added by lzq
   [SYS_brk]         "brk",
   // added by lmq
+  [SYS_exit_cscc]   "exit",
+  [SYS_pipe_cscc]   "pipe",
+  [SYS_getpid_cscc] "getpid",
   [SYS_clone]       "clone",
   [SYS_wait4]       "wait4",
   [SYS_sched_yield] "sched_yield",
-  [SYS_getppid]     "getppid",
   [SYS_execve]      "execve",
+  [SYS_getppid]     "getppid",
+  [SYS_close_cscc]  "close",
+  [SYS_read_cscc]   "read",
+  [SYS_write_cscc]  "write",
   [SYS_openat]      "openat",
   [SYS_mkdirat]     "mkdirat",
+  [SYS_chdir_cscc]  "chdir",
+  [SYS_getcwd_cscc] "getcwd",
+  [SYS_dup_cscc]    "dup",
   [SYS_dup3]        "dup3",
   [SYS_getdents64]  "getdents64",
   [SYS_fstat_cscc]  "fstat_cscc",
