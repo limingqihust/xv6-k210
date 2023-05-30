@@ -113,6 +113,8 @@ $T/kernel: $(OBJS) $(linker) $U/initcode
 
 build: $T/kernel userprogs
 
+
+
 # Compile RustSBI
 RUSTSBI:
 ifeq ($(platform), k210)
@@ -151,6 +153,7 @@ QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 # QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0 
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
+# modified for test online
 run: build
 ifeq ($(platform), k210)
 	@$(OBJCOPY) $T/kernel --strip-all -O binary $(image)
@@ -163,8 +166,10 @@ else
 	@$(QEMU) $(QEMUOPTS)
 endif
 
-all: build
-	@$(QEMU) $(QEMUOPTS)
+# all: build
+# 	@$(QEMU) $(QEMUOPTS)
+
+
 
 $U/initcode: $U/initcode.S
 	$(CC) $(CFLAGS) -march=rv64g -nostdinc -I. -Ikernel -c $U/initcode.S -o $U/initcode.o
