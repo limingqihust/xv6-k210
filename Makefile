@@ -277,7 +277,7 @@ sdcard: userprogs
 
 clean: 
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	rm -f sdcard.img \
+	rm -f fs.img \
 	kernel-* \
 	*/*.o */*.d */*.asm */*.sym \
 	$T/* \
