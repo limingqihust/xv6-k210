@@ -70,7 +70,7 @@ void procinit(void)
     // p->kstack = va;
   }
   // kvminithart();
-
+  
   memset(cpus, 0, sizeof(cpus));
 #ifdef DEBUG
   printf("procinit\n");

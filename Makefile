@@ -8,6 +8,7 @@ T=target
 
 # added by lmq
 TEST=test/build/riscv64
+# TEST=sdcard_test/
 
 OBJS =
 ifeq ($(platform), k210)
@@ -62,7 +63,6 @@ endif
 
 #modiefied by lmq for test online 
 QEMU = qemu-system-riscv64          		# 7.0.0
-# QEMU = /usr/bin/qemu-system-riscv64  		# 4.2.0
 
 
 ifeq ($(platform), k210)
@@ -147,22 +147,22 @@ QEMUOPTS += -smp $(CPUS)
 QEMUOPTS += -bios default
 
 # import virtual disk image
-QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0 
-# QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0 
+# QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0 
+QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0 
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 # 自己的
-run: build
-ifeq ($(platform), k210)
-	@$(OBJCOPY) $T/kernel --strip-all -O binary $(image)
-	@$(OBJCOPY) $(RUSTSBI) --strip-all -O binary $(k210)
-	@dd if=$(image) of=$(k210) bs=128k seek=1
-	@$(OBJDUMP) -D -b binary -m riscv $(k210) > $T/k210.asm
-	@sudo chmod 777 $(k210-serialport)
-	@python3 ./tools/kflash.py -p $(k210-serialport) -b 1500000 -t $(k210)
-else
-	@$(QEMU) $(QEMUOPTS)
-endif
+# run: build
+# ifeq ($(platform), k210)
+# 	@$(OBJCOPY) $T/kernel --strip-all -O binary $(image)
+# 	@$(OBJCOPY) $(RUSTSBI) --strip-all -O binary $(k210)
+# 	@dd if=$(image) of=$(k210) bs=128k seek=1
+# 	@$(OBJDUMP) -D -b binary -m riscv $(k210) > $T/k210.asm
+# 	@sudo chmod 777 $(k210-serialport)
+# 	@python3 ./tools/kflash.py -p $(k210-serialport) -b 1500000 -t $(k210)
+# else
+# 	@$(QEMU) $(QEMUOPTS)
+# endif
 
 
 # 别人的
