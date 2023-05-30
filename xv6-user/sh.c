@@ -279,7 +279,10 @@ main(void)
   //added by lzq
   getcwd(mycwd);
   char testcmd[30][25] = {"./sdcard_test/brk",
-                          "brk"};
+                          "./sdcard_test/fork",
+                          "./sdcard_test/open",
+                          "./sdcard_test/close"
+                          };
 
   for(int i=0; i<2; i++){
       struct cmd *cmd = parsecmd(testcmd[i]);
