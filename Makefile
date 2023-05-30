@@ -179,7 +179,7 @@ endif
 
 
 
-all: build
+all: build fs
 	@$(QEMU) $(QEMUOPTS)
 
 
@@ -254,19 +254,17 @@ dst=/mnt
 fs: $(UPROGS)
 	@if [ ! -f "sdcard.img" ]; then \
 		echo "making fs image..."; \
-		dd if=/dev/zero of=sdcard.img bs=512k count=512; \
+		dd if=/dev/zero of=sdcard.img bs=512k count=2048; \
 		mkfs.vfat -F 32 sdcard.img; fi
 	@sudo mount sdcard.img $(dst)
-#	@if [ ! -d "$(dst)/bin" ]; then sudo mkdir $(dst)/bin; fi
-#	@sudo cp README $(dst)/README
-#	@for file in $$( ls $U/_* ); do \
-#		sudo cp $$file $(dst)/$${file#$U/_};\
+	@if [ ! -d "$(dst)/bin" ]; then sudo mkdir $(dst)/bin; fi
+	@sudo cp README $(dst)/README
+	@for file in $$( ls $U/_* ); do \
+		sudo cp $$file $(dst)/$${file#$U/_};\
 		sudo cp $$file $(dst)/bin/$${file#$U/_}; done
-# added by lmq
-	for file in $(TEST)/* ;do\
-		echo "$(file)"
-		sudo cp -r $(TEST)/$(file) $(dst)/ ; done
-	@sudo umount $(dst)
+# added by lzq
+	sudo cp -r $(TEST)/* $(dst)
+	sudo umount sdcard.img
 
 # Write mounted sdcard
 sdcard: userprogs
@@ -279,7 +277,7 @@ sdcard: userprogs
 
 clean: 
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	rm -f fs.img \
+	rm -f sdcard.img \
 	kernel-* \
 	*/*.o */*.d */*.asm */*.sym \
 	$T/* \

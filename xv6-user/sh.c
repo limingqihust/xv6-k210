@@ -280,10 +280,10 @@ main(void)
 
   //added by lzq
   getcwd(mycwd);
-  char testcmd[30][25] = {"./sdcard_test/brk",
-                          "./sdcard_test/fork",
-                          "./sdcard_test/write",
-                          "./sdcard_test/close"
+  char testcmd[30][25] = {"brk",
+                          "fork",
+                          "write",
+                          "close"
                           };
 
   for(int i=0; i<4; i++){
