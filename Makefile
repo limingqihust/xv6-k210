@@ -102,13 +102,15 @@ linker = ./linker/qemu.ld
 endif
 
 # Compile Kernel
-$T/kernel: $(OBJS) $(linker) $U/initcode
+kernel-qemu: $(OBJS) $(linker) $U/initcode
 	@if [ ! -d "./target" ]; then mkdir target; fi
-	@$(LD) $(LDFLAGS) -T $(linker) -o $T/kernel $(OBJS)
-	@$(OBJDUMP) -S $T/kernel > $T/kernel.asm
-	@$(OBJDUMP) -t $T/kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $T/kernel.sym
+	@$(LD) $(LDFLAGS) -T $(linker) -o kernel-qemu $(OBJS)
+	@$(OBJDUMP) -S kernel-qemu > kernel-qemu.asm
+	@$(OBJDUMP) -t kernel-qemu | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > kernel-qemu.sym
 
-build: $T/kernel userprogs
+all: clean kernel-qemu userprogs
+
+build: kernel-qemu userprogs
 
 # Compile RustSBI
 RUSTSBI:
@@ -140,8 +142,8 @@ QEMUOPTS = -machine virt -kernel $T/kernel -m 8M -nographic
 QEMUOPTS += -smp $(CPUS)
 
 # modified by lmq
-# QEMUOPTS += -bios $(RUSTSBI)
-QEMUOPTS += -bios default
+QEMUOPTS += -bios $(RUSTSBI)
+# QEMUOPTS += -bios default
 
 # import virtual disk image
 # QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0 
@@ -149,16 +151,18 @@ QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 run: build
-ifeq ($(platform), k210)
-	@$(OBJCOPY) $T/kernel --strip-all -O binary $(image)
-	@$(OBJCOPY) $(RUSTSBI) --strip-all -O binary $(k210)
-	@dd if=$(image) of=$(k210) bs=128k seek=1
-	@$(OBJDUMP) -D -b binary -m riscv $(k210) > $T/k210.asm
-	@sudo chmod 777 $(k210-serialport)
-	@python3 ./tools/kflash.py -p $(k210-serialport) -b 1500000 -t $(k210)
-else
-	@$(QEMU) $(QEMUOPTS)
-endif
+# ifeq ($(platform), k210)
+# 	@$(OBJCOPY) $T/kernel --strip-all -O binary $(image)
+# 	@$(OBJCOPY) $(RUSTSBI) --strip-all -O binary $(k210)
+# 	@dd if=$(image) of=$(k210) bs=128k seek=1
+# 	@$(OBJDUMP) -D -b binary -m riscv $(k210) > $T/k210.asm
+# 	@sudo chmod 777 $(k210-serialport)
+# 	@python3 ./tools/kflash.py -p $(k210-serialport) -b 1500000 -t $(k210)
+# else
+	@make platform=qemu
+	@qemu-system-riscv64 -machine virt -kernel kernel-qemu -m 128M -nographic -smp 2 -bios defalut -drive file=sdcard.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0 -no-reboot
+# 	@$(QEMU) $(QEMUOPTS)
+# endif
 
 all: build
 	@$(QEMU) $(QEMUOPTS)
