@@ -31,6 +31,7 @@ fileinit(void)
   for(f = ftable.file; f < ftable.file + NFILE; f++){
     memset(f, 0, sizeof(struct file));
   }
+
   #ifdef DEBUG
   printf("fileinit\n");
   #endif

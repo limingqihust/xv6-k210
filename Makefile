@@ -7,8 +7,8 @@ U=xv6-user
 T=target
 
 # added by lmq
-#TEST=test/build/riscv64
-TEST=sdcard_test
+TEST=test/build/riscv64
+# TEST=sdcard_test/
 
 OBJS =
 ifeq ($(platform), k210)
@@ -154,21 +154,22 @@ QEMUOPTS += -smp $(CPUS)
 QEMUOPTS += -bios default
 
 # import virtual disk image
+# QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 # 自己的
-run: build
-ifeq ($(platform), k210)
-	@$(OBJCOPY) $T/kernel --strip-all -O binary $(image)
-	@$(OBJCOPY) $(RUSTSBI) --strip-all -O binary $(k210)
-	@dd if=$(image) of=$(k210) bs=128k seek=1
-	@$(OBJDUMP) -D -b binary -m riscv $(k210) > $T/k210.asm
-	@sudo chmod 777 $(k210-serialport)
-	@python3 ./tools/kflash.py -p $(k210-serialport) -b 1500000 -t $(k210)
-else
-	@$(QEMU) $(QEMUOPTS)
-endif
+# run: build
+# ifeq ($(platform), k210)
+# 	@$(OBJCOPY) $T/kernel --strip-all -O binary $(image)
+# 	@$(OBJCOPY) $(RUSTSBI) --strip-all -O binary $(k210)
+# 	@dd if=$(image) of=$(k210) bs=128k seek=1
+# 	@$(OBJDUMP) -D -b binary -m riscv $(k210) > $T/k210.asm
+# 	@sudo chmod 777 $(k210-serialport)
+# 	@python3 ./tools/kflash.py -p $(k210-serialport) -b 1500000 -t $(k210)
+# else
+# 	@$(QEMU) $(QEMUOPTS)
+# endif
 
 
 # 别人的
@@ -176,13 +177,8 @@ endif
 # 	@make platform=qemu
 # 	@qemu-system-riscv64 -machine virt -kernel $T/kernel -m 128M -nographic -smp 2 -bios default -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0 -no-reboot
 
-
-
-
 all: build
 	@$(QEMU) $(QEMUOPTS)
-
-
 
 $U/initcode: $U/initcode.S
 	$(CC) $(CFLAGS) -march=rv64g -nostdinc -I. -Ikernel -c $U/initcode.S -o $U/initcode.o
@@ -252,19 +248,22 @@ dst=/mnt
 # @sudo cp $U/_sh $(dst)/sh
 # Make fs image
 fs: $(UPROGS)
-	@if [ ! -f "sdcard.img" ]; then \
+	@if [ ! -f "fs.img" ]; then \
 		echo "making fs image..."; \
-		dd if=/dev/zero of=sdcard.img bs=512k count=2048; \
-		mkfs.vfat -F 32 sdcard.img; fi
-	@sudo mount sdcard.img $(dst)
+		dd if=/dev/zero of=fs.img bs=512k count=512; \
+		mkfs.vfat -F 32 fs.img; fi
+	@sudo mount fs.img $(dst)
 	@if [ ! -d "$(dst)/bin" ]; then sudo mkdir $(dst)/bin; fi
 	@sudo cp README $(dst)/README
 	@for file in $$( ls $U/_* ); do \
 		sudo cp $$file $(dst)/$${file#$U/_};\
 		sudo cp $$file $(dst)/bin/$${file#$U/_}; done
-# added by lzq
-	sudo cp -r $(TEST)/* $(dst)
-	sudo umount sdcard.img
+
+# added by lmq
+	@for file in 'ls $(TEST)';do\
+		sudo cp -r $(TEST)/$(file) $(dst)/$(file) ; done
+	@sudo umount $(dst)
+
 
 # Write mounted sdcard
 sdcard: userprogs
@@ -277,7 +276,7 @@ sdcard: userprogs
 
 clean: 
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	rm -f fs.img \
+	rm -f sdcard.img \
 	kernel-* \
 	*/*.o */*.d */*.asm */*.sym \
 	$T/* \

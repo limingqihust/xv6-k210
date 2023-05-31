@@ -39,7 +39,6 @@ main(void)
       wpid = wait((int *) 0);
       if(wpid == pid){
         // the shell exited; restart it.
-        shutdown();
         exit(1); //shutdown？
         break;
       } else if(wpid < 0){

@@ -14,7 +14,9 @@
         "syscall.h": "c",
         "stdlib.h": "c",
         "stdarg.h": "c",
-        "defs.h": "c"
+        "defs.h": "c",
+        "sbi.h": "c",
+        "buf.h": "c"
     },
     "cmake.configureOnOpen": false
 }

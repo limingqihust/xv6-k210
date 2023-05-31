@@ -4,8 +4,8 @@
 #define NPROC        50  // maximum number of processes
 #define NCPU          2  // maximum number of CPUs
 // modified by lmq for SYS_dup2
-#define NOFILE      128  // open files per process
-#define NFILE       128  // open files per system
+#define NOFILE      16  // open files per process
+#define NFILE       100  // open files per system
 #define NINODE       50  // maximum number of active i-nodes
 #define NDEV         10  // maximum major device number
 #define ROOTDEV       1  // device number of file system root disk
