@@ -306,14 +306,114 @@ sys_shutdown(){
     return 0;
 }
 
-uint64 
-sys_uname()
-{
-  return 0;
-}
+// added by wyx for SYS_times
+
+struct tms              
+{                     
+	long tms_utime;  
+	long tms_stime;  
+	long tms_cutime; 
+	long tms_cstime; 
+};
+
 
 uint64 
-sys_gettimeofday()
+sys_times(void) {
+  struct tms *tmsbuf; // 用于存储时间数据的结构体指针
+
+  if (argaddr(0, (void*)&tmsbuf) < 0)
+      return -1; // 验证用户传递的结构体指针是否有效
+
+  // 获取当前进程的运行时间数据，并填充到tmsbuf指向的结构体中
+  tmsbuf->tms_utime = ticks; // 用户态CPU时间
+  tmsbuf->tms_stime = 0; // 在xv6中无法直接获取系统态CPU时间
+  tmsbuf->tms_cutime = 0; // 在xv6中无法直接获取子进程的用户态CPU时间
+  tmsbuf->tms_cstime = 0; // 在xv6中无法直接获取子进程的系统态CPU时间
+
+  return ticks; // 成功返回已经过去的滴答数
+}
+
+
+// added by wyx for SYS_uname
+struct utsname {
+	char sysname[65];
+	char nodename[65];
+	char release[65];
+	char version[65];
+	char machine[65];
+	char domainname[65];
+};
+
+uint64
+sys_uname(void)
 {
-  return 0;
+    struct utsname *buf; // 用于存储系统信息的结构体指针
+
+    if (argaddr(0, (void*)&buf) < 0)
+        return -1; // 验证用户传递的结构体指针是否有效
+
+    // 填充系统信息到buf指向的结构体中
+    strncpy(buf->sysname, "HUSTLWL", sizeof(buf->sysname)); // 操作系统名称
+    strncpy(buf->nodename, "LWL-host", sizeof(buf->nodename));  // 主机名
+    strncpy(buf->release, "LWL--FirstVersion", sizeof(buf->release)); // 操作系统版本
+    strncpy(buf->version, "0.1", sizeof(buf->version)); // 操作系统版本号
+    strncpy(buf->machine, "x86-64", sizeof(buf->machine)); // 硬件架构
+
+    return 0; // 返回成功
+}
+
+
+// added by wyx for SYS_gettimeofday
+struct timespec {
+    long tv_sec;   // 秒部分
+    long tv_nsec;  // 纳秒部分
+};
+
+uint64
+sys_gettimeofday(void)
+{
+    struct timespec *ts; // 用于存储时间值的结构体指针
+
+    if (argaddr(0, (void*)&ts) < 0)
+        return -1; // 验证用户传递的结构体指针是否有效
+
+    // 获取当前时间，使用ticks转换为秒和纳秒部分
+    uint tick = ticks;
+    ts->tv_sec = tick / 100; // 每个滴答100个时钟周期，换算为秒
+    ts->tv_nsec = (tick % 100) * (1000000000 / 100); // 换算为纳秒
+
+    return 0; // 返回成功
+}
+
+// added by wyx for SYS_nanosleep
+uint64
+sys_nanosleep(void)
+{
+    struct timespec *req; // 用于指定休眠时间的结构体指针
+    struct timespec *rem; // 用于返回剩余休眠时间的结构体指针
+
+    if (argaddr(0, (void*)&req) < 0 ||
+        argaddr(1, (void*)&rem) < 0)
+        return -1; // 验证用户传递的结构体指针是否有效
+
+    // 获取休眠时间
+    uint sleep_sec = req->tv_sec;
+    uint sleep_nsec = req->tv_nsec;
+
+    // 计算总的休眠时间（以ticks为单位）
+    uint sleep_ticks = sleep_sec * 100 + sleep_nsec / (1000000000 / 100);
+
+    // 获取当前ticks
+    uint start_ticks = ticks;
+    uint end_ticks = start_ticks + sleep_ticks;
+
+    // 执行休眠
+    while (ticks < end_ticks)
+        yield();
+
+    // 返回剩余休眠时间（置为0，因为xv6没有提供返回剩余时间的功能）
+    rem->tv_sec = 0;
+    rem->tv_nsec = 0;
+
+    return 0; // 返回成功
 }

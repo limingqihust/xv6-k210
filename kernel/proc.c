@@ -244,6 +244,7 @@ void proc_freepagetable(pagetable_t pagetable, uint64 sz)
   vmunmap(pagetable, TRAPFRAME, 1, 0);
   uvmfree(pagetable, sz);
 }
+// added by lmq for running sdcard.img
 #ifndef TEST
 uchar initcode[] = {
 0x13, 0x05, 0x20, 0x00, 0x9b, 0x05, 0x10, 0x00, 0x13, 0x06, 0x00, 0x00, 0x93, 0x08, 0xa0, 0x00

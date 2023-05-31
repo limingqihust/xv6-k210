@@ -7,8 +7,8 @@ U=xv6-user
 T=target
 
 # added by lmq
-TEST=test/build/riscv64
-# TEST=sdcard_test/
+# TEST=test/build/riscv64
+TEST=sdcard_test/
 
 OBJS =
 ifeq ($(platform), k210)
@@ -280,7 +280,7 @@ sdcard: userprogs
 
 clean: 
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	rm -f ./fs.img\
+	rm -f ./fs.img \
 	kernel-* \
 	*/*.o */*.d */*.asm */*.sym \
 	$T/* \
