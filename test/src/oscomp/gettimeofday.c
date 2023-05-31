@@ -13,8 +13,11 @@
 void test_gettimeofday() {
 	TEST_START(__func__);
 	int test_ret1 = get_time();
-	volatile int i = 12500000;	// qemu时钟频率12500000
-	while(i > 0) i--;
+	volatile int i = 	12500000;	// qemu时钟频率12500000
+	while(i > 0) 
+	{
+		i--;
+	}
 	int test_ret2 = get_time();
 	if(test_ret1 > 0 && test_ret2 > 0){
 		printf("gettimeofday success.\n");

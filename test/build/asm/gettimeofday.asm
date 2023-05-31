@@ -38,23 +38,27 @@ void test_gettimeofday() {
     102c:	2ae000ef          	jal	ra,12da <puts>
 	int test_ret1 = get_time();
     1030:	491000ef          	jal	ra,1cc0 <get_time>
-	volatile int i = 12500000;	// qemu时钟频率12500000
+	volatile int i = 	12500000;	// qemu时钟频率12500000
     1034:	00bec7b7          	lui	a5,0xbec
     1038:	c207879b          	addiw	a5,a5,-992
     103c:	c63e                	sw	a5,12(sp)
-	while(i > 0) i--;
+	while(i > 0) 
     103e:	47b2                	lw	a5,12(sp)
 	int test_ret1 = get_time();
     1040:	0005049b          	sext.w	s1,a0
-	while(i > 0) i--;
+	while(i > 0) 
     1044:	2781                	sext.w	a5,a5
     1046:	00f05963          	blez	a5,1058 <test_gettimeofday+0x54>
+	{
+		i--;
     104a:	47b2                	lw	a5,12(sp)
     104c:	37fd                	addiw	a5,a5,-1
     104e:	c63e                	sw	a5,12(sp)
+	while(i > 0) 
     1050:	47b2                	lw	a5,12(sp)
     1052:	2781                	sext.w	a5,a5
     1054:	fef04be3          	bgtz	a5,104a <test_gettimeofday+0x46>
+	}
 	int test_ret2 = get_time();
     1058:	469000ef          	jal	ra,1cc0 <get_time>
 	if(test_ret1 > 0 && test_ret2 > 0){

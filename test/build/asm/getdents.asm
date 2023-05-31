@@ -45,11 +45,11 @@ void test_getdents(void){
     1032:	00001517          	auipc	a0,0x1
     1036:	ea650513          	addi	a0,a0,-346 # 1ed8 <__clone+0x52>
     103a:	3d7000ef          	jal	ra,1c10 <open>
-    printf("open fd:%d\n", fd);
+    printf("open fd:%d\n", fd);             // 该目录的文件描述符要大于1
     103e:	85aa                	mv	a1,a0
     fd = open(".", O_RDONLY);
     1040:	842a                	mv	s0,a0
-    printf("open fd:%d\n", fd);
+    printf("open fd:%d\n", fd);             // 该目录的文件描述符要大于1
     1042:	00001517          	auipc	a0,0x1
     1046:	e9e50513          	addi	a0,a0,-354 # 1ee0 <__clone+0x5a>
     104a:	2ba000ef          	jal	ra,1304 <printf>
@@ -60,18 +60,18 @@ void test_getdents(void){
     1056:	f1658593          	addi	a1,a1,-234 # 1f68 <buf>
     105a:	8522                	mv	a0,s0
     105c:	5e1000ef          	jal	ra,1e3c <getdents>
-	printf("getdents fd:%d\n", nread);
+	printf("getdents fd:%d\n", nread);      // 读取的字节数大于1
     1060:	85aa                	mv	a1,a0
 	nread = getdents(fd, dirp64, 512);
     1062:	84aa                	mv	s1,a0
-	printf("getdents fd:%d\n", nread);
+	printf("getdents fd:%d\n", nread);      // 读取的字节数大于1
     1064:	00001517          	auipc	a0,0x1
     1068:	e8c50513          	addi	a0,a0,-372 # 1ef0 <__clone+0x6a>
     106c:	298000ef          	jal	ra,1304 <printf>
 	assert(nread != -1);
     1070:	57fd                	li	a5,-1
     1072:	04f48a63          	beq	s1,a5,10c6 <test_getdents+0xc2>
-	printf("getdents success.\n%s\n", dirp64->d_name);
+	printf("getdents success.\n%s\n", dirp64->d_name);      // 名字要大于等于1
     1076:	00001597          	auipc	a1,0x1
     107a:	f0558593          	addi	a1,a1,-251 # 1f7b <buf+0x13>
     107e:	00001517          	auipc	a0,0x1

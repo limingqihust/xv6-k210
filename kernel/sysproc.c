@@ -372,16 +372,17 @@ struct timespec {
 uint64
 sys_gettimeofday(void)
 {
-    struct timespec *ts; // 用于存储时间值的结构体指针
-
-    if (argaddr(0, (void*)&ts) < 0)
+    struct timespec now_ts; // 用于存储时间值的结构体指针
+    uint64 ts_addr;
+    if (argaddr(0, (void*)&ts_addr) < 0)
         return -1; // 验证用户传递的结构体指针是否有效
 
     // 获取当前时间，使用ticks转换为秒和纳秒部分
     uint tick = ticks;
-    ts->tv_sec = tick / 100; // 每个滴答100个时钟周期，换算为秒
-    ts->tv_nsec = (tick % 100) * (1000000000 / 100); // 换算为纳秒
-
+    now_ts.tv_sec = tick / 100; // 每个滴答100个时钟周期，换算为秒
+    now_ts.tv_nsec = (tick % 100) * (1000000000 / 100); // 换算为纳秒
+    if(copyout2(ts_addr,(char*)&now_ts,sizeof(struct timespec)) < 0)
+        return -1; // 将时间值拷贝到用户空间
     return 0; // 返回成功
 }
 

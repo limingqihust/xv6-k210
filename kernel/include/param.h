@@ -17,7 +17,6 @@
 #define NBUF         (MAXOPBLOCKS*3)  // size of disk block cache
 #define FSSIZE       1000  // size of file system in blocks
 #define MAXPATH      260   // maximum file path name
-#define INTERVAL     (390000000 / 200) // timer interrupt interval
-// added by lmq for debug using fs.img
-// #define TEST
+// modified by lmq for SYS_gettimeofday
+#define INTERVAL     (39000000 / 200) // timer interrupt interval
 #endif
