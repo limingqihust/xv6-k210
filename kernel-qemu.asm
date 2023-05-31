@@ -8,7 +8,7 @@ Disassembly of section .text:
     80200000:	00150293          	addi	t0,a0,1
     80200004:	02ba                	slli	t0,t0,0xe
     80200006:	0000e117          	auipc	sp,0xe
-    8020000a:	cca13103          	ld	sp,-822(sp) # 8020dcd0 <_GLOBAL_OFFSET_TABLE_+0x60>
+    8020000a:	c9213103          	ld	sp,-878(sp) # 8020dc98 <_GLOBAL_OFFSET_TABLE_+0x60>
     8020000e:	9116                	add	sp,sp,t0
     80200010:	1e3000ef          	jal	ra,802009f2 <main>
 
@@ -528,7 +528,7 @@ kfree(void *pa)
     80200454:	e3ad                	bnez	a5,802004b6 <kfree+0x72>
     80200456:	84aa                	mv	s1,a0
     80200458:	0000e797          	auipc	a5,0xe
-    8020045c:	8487b783          	ld	a5,-1976(a5) # 8020dca0 <_GLOBAL_OFFSET_TABLE_+0x30>
+    8020045c:	8107b783          	ld	a5,-2032(a5) # 8020dc68 <_GLOBAL_OFFSET_TABLE_+0x30>
     80200460:	04f56b63          	bltu	a0,a5,802004b6 <kfree+0x72>
     80200464:	40300793          	li	a5,1027
     80200468:	07d6                	slli	a5,a5,0x15
@@ -640,7 +640,7 @@ kfree(void *pa)
     8020053c:	40300593          	li	a1,1027
     80200540:	05d6                	slli	a1,a1,0x15
     80200542:	0000d517          	auipc	a0,0xd
-    80200546:	75e53503          	ld	a0,1886(a0) # 8020dca0 <_GLOBAL_OFFSET_TABLE_+0x30>
+    80200546:	72653503          	ld	a0,1830(a0) # 8020dc68 <_GLOBAL_OFFSET_TABLE_+0x30>
     8020054a:	00000097          	auipc	ra,0x0
     8020054e:	f7c080e7          	jalr	-132(ra) # 802004c6 <freerange>
 }
@@ -1534,7 +1534,7 @@ static inline void sbi_send_ipi(const unsigned long *hart_mask)
     80200ae2:	4505                	li	a0,1
 	register uint64 a1 asm ("a1") = (uint64)(arg1);
     80200ae4:	0000d597          	auipc	a1,0xd
-    80200ae8:	1cc5b583          	ld	a1,460(a1) # 8020dcb0 <_GLOBAL_OFFSET_TABLE_+0x40>
+    80200ae8:	1945b583          	ld	a1,404(a1) # 8020dc78 <_GLOBAL_OFFSET_TABLE_+0x40>
 	register uint64 a4 asm ("a4") = (uint64)(arg4);
     80200aec:	4701                	li	a4,0
 	register uint64 a5 asm ("a5") = (uint64)(arg5);
@@ -1984,7 +1984,7 @@ mappages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm)
     80200dea:	f3a080e7          	jalr	-198(ra) # 80200d20 <kvmmap>
   kvmmap(KERNBASE, KERNBASE, (uint64)etext - KERNBASE, PTE_R | PTE_X);
     80200dee:	0000d497          	auipc	s1,0xd
-    80200df2:	eaa4b483          	ld	s1,-342(s1) # 8020dc98 <_GLOBAL_OFFSET_TABLE_+0x28>
+    80200df2:	e724b483          	ld	s1,-398(s1) # 8020dc60 <_GLOBAL_OFFSET_TABLE_+0x28>
     80200df6:	46a9                	li	a3,10
     80200df8:	bff00613          	li	a2,-1025
     80200dfc:	0656                	slli	a2,a2,0x15
@@ -2007,7 +2007,7 @@ mappages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm)
     80200e26:	46a9                	li	a3,10
     80200e28:	6605                	lui	a2,0x1
     80200e2a:	0000d597          	auipc	a1,0xd
-    80200e2e:	e4e5b583          	ld	a1,-434(a1) # 8020dc78 <_GLOBAL_OFFSET_TABLE_+0x8>
+    80200e2e:	e165b583          	ld	a1,-490(a1) # 8020dc40 <_GLOBAL_OFFSET_TABLE_+0x8>
     80200e32:	04000537          	lui	a0,0x4000
     80200e36:	157d                	addi	a0,a0,-1
     80200e38:	0532                	slli	a0,a0,0xc
@@ -3804,7 +3804,7 @@ wakeup1(struct proc *p)
     80201ac2:	c5e080e7          	jalr	-930(ra) # 8020071c <release>
   if (first)
     80201ac6:	00009797          	auipc	a5,0x9
-    80201aca:	53a7a783          	lw	a5,1338(a5) # 8020b000 <first.1692>
+    80201aca:	53a7a783          	lw	a5,1338(a5) # 8020b000 <first.1691>
     80201ace:	eb91                	bnez	a5,80201ae2 <forkret+0x36>
   usertrapret();
     80201ad0:	00001097          	auipc	ra,0x1
@@ -3817,7 +3817,7 @@ wakeup1(struct proc *p)
     80201ae0:	8082                	ret
     first = 0;
     80201ae2:	00009797          	auipc	a5,0x9
-    80201ae6:	5007af23          	sw	zero,1310(a5) # 8020b000 <first.1692>
+    80201ae6:	5007af23          	sw	zero,1310(a5) # 8020b000 <first.1691>
     fat32_init();
     80201aea:	00004097          	auipc	ra,0x4
     80201aee:	7c8080e7          	jalr	1992(ra) # 802062b2 <fat32_init>
@@ -3848,7 +3848,7 @@ wakeup1(struct proc *p)
     80201b2c:	ba0080e7          	jalr	-1120(ra) # 802006c8 <acquire>
   pid = nextpid;
     80201b30:	00009797          	auipc	a5,0x9
-    80201b34:	4d078793          	addi	a5,a5,1232 # 8020b000 <first.1692>
+    80201b34:	4d078793          	addi	a5,a5,1232 # 8020b000 <first.1691>
     80201b38:	43c4                	lw	s1,4(a5)
   nextpid = nextpid + 1;
     80201b3a:	0014871b          	addiw	a4,s1,1
@@ -3884,7 +3884,7 @@ wakeup1(struct proc *p)
   if (mappages(pagetable, TRAMPOLINE, PGSIZE,
     80201b72:	4729                	li	a4,10
     80201b74:	0000c697          	auipc	a3,0xc
-    80201b78:	1046b683          	ld	a3,260(a3) # 8020dc78 <_GLOBAL_OFFSET_TABLE_+0x8>
+    80201b78:	0cc6b683          	ld	a3,204(a3) # 8020dc40 <_GLOBAL_OFFSET_TABLE_+0x8>
     80201b7c:	6605                	lui	a2,0x1
     80201b7e:	040005b7          	lui	a1,0x4000
     80201b82:	15fd                	addi	a1,a1,-1
@@ -4151,7 +4151,7 @@ wakeup1(struct proc *p)
     80201da0:	6905                	lui	s2,0x1
     80201da2:	bc090693          	addi	a3,s2,-1088 # bc0 <_entry-0x801ff440>
     80201da6:	00009617          	auipc	a2,0x9
-    80201daa:	29a60613          	addi	a2,a2,666 # 8020b040 <initcode>
+    80201daa:	26260613          	addi	a2,a2,610 # 8020b008 <initcode>
     80201dae:	6d2c                	ld	a1,88(a0)
     80201db0:	6928                	ld	a0,80(a0)
     80201db2:	fffff097          	auipc	ra,0xfffff
@@ -4450,7 +4450,7 @@ wakeup1(struct proc *p)
     80202036:	1a7e                	slli	s4,s4,0x3f
         w_satp(MAKE_SATP(kernel_pagetable));
     80202038:	0000cb97          	auipc	s7,0xc
-    8020203c:	c90bbb83          	ld	s7,-880(s7) # 8020dcc8 <_GLOBAL_OFFSET_TABLE_+0x58>
+    8020203c:	c58bbb83          	ld	s7,-936(s7) # 8020dc90 <_GLOBAL_OFFSET_TABLE_+0x58>
     80202040:	a8a5                	j	802020b8 <scheduler+0xc8>
         p->state = RUNNING;
     80202042:	478d                	li	a5,3
@@ -5193,7 +5193,7 @@ void procdump(void)
     802025ea:	af2a0a13          	addi	s4,s4,-1294 # 8020a0d8 <etext+0xd8>
     if (p->state >= 0 && p->state < NELEM(states) && states[p->state])
     802025ee:	00009b97          	auipc	s7,0x9
-    802025f2:	612b8b93          	addi	s7,s7,1554 # 8020bc00 <states.1730>
+    802025f2:	5dab8b93          	addi	s7,s7,1498 # 8020bbc8 <states.1729>
     802025f6:	a01d                	j	8020261c <procdump+0x7e>
     printf("%d\t%s\t%s\t%d", p->pid, state, p->name, p->sz);
     802025f8:	ee86b703          	ld	a4,-280(a3)
@@ -5494,7 +5494,7 @@ trapinithart(void)
     8020283c:	0800                	addi	s0,sp,16
   asm volatile("csrw stvec, %0" : : "r" (x));
     8020283e:	0000b797          	auipc	a5,0xb
-    80202842:	4527b783          	ld	a5,1106(a5) # 8020dc90 <_GLOBAL_OFFSET_TABLE_+0x20>
+    80202842:	41a7b783          	ld	a5,1050(a5) # 8020dc58 <_GLOBAL_OFFSET_TABLE_+0x20>
     80202846:	10579073          	csrw	stvec,a5
   asm volatile("csrr %0, sstatus" : "=r" (x) );
     8020284a:	100027f3          	csrr	a5,sstatus
@@ -5549,9 +5549,9 @@ usertrapret(void)
   // send syscalls, interrupts, and exceptions to trampoline.S
   w_stvec(TRAMPOLINE + (uservec - trampoline));
     8020288c:	0000b617          	auipc	a2,0xb
-    80202890:	3ec63603          	ld	a2,1004(a2) # 8020dc78 <_GLOBAL_OFFSET_TABLE_+0x8>
+    80202890:	3b463603          	ld	a2,948(a2) # 8020dc40 <_GLOBAL_OFFSET_TABLE_+0x8>
     80202894:	0000b697          	auipc	a3,0xb
-    80202898:	4246b683          	ld	a3,1060(a3) # 8020dcb8 <_GLOBAL_OFFSET_TABLE_+0x48>
+    80202898:	3ec6b683          	ld	a3,1004(a3) # 8020dc80 <_GLOBAL_OFFSET_TABLE_+0x48>
     8020289c:	8e91                	sub	a3,a3,a2
     8020289e:	040007b7          	lui	a5,0x4000
     802028a2:	17fd                	addi	a5,a5,-1
@@ -5616,7 +5616,7 @@ usertrapret(void)
   // and switches to user mode with sret.
   uint64 fn = TRAMPOLINE + (userret - trampoline);
     802028ec:	0000b717          	auipc	a4,0xb
-    802028f0:	39c73703          	ld	a4,924(a4) # 8020dc88 <_GLOBAL_OFFSET_TABLE_+0x18>
+    802028f0:	36473703          	ld	a4,868(a4) # 8020dc50 <_GLOBAL_OFFSET_TABLE_+0x18>
     802028f4:	8f11                	sub	a4,a4,a2
     802028f6:	97ba                	add	a5,a5,a4
   ((void (*)(uint64,uint64))fn)(TRAPFRAME, satp);
@@ -5748,7 +5748,7 @@ int devintr(void) {
     802029c8:	e3ad                	bnez	a5,80202a2a <usertrap+0x76>
   asm volatile("csrw stvec, %0" : : "r" (x));
     802029ca:	0000b797          	auipc	a5,0xb
-    802029ce:	2c67b783          	ld	a5,710(a5) # 8020dc90 <_GLOBAL_OFFSET_TABLE_+0x20>
+    802029ce:	28e7b783          	ld	a5,654(a5) # 8020dc58 <_GLOBAL_OFFSET_TABLE_+0x20>
     802029d2:	10579073          	csrw	stvec,a5
   struct proc *p = myproc();
     802029d6:	fffff097          	auipc	ra,0xfffff
@@ -6457,7 +6457,7 @@ sys_test_proc(void) {
     80203008:	04f76863          	bltu	a4,a5,80203058 <syscall+0x7a>
     8020300c:	00399713          	slli	a4,s3,0x3
     80203010:	00009797          	auipc	a5,0x9
-    80203014:	c1878793          	addi	a5,a5,-1000 # 8020bc28 <syscalls>
+    80203014:	be078793          	addi	a5,a5,-1056 # 8020bbf0 <syscalls>
     80203018:	97ba                	add	a5,a5,a4
     8020301a:	639c                	ld	a5,0(a5)
     8020301c:	cf95                	beqz	a5,80203058 <syscall+0x7a>
@@ -6473,7 +6473,7 @@ sys_test_proc(void) {
     80203030:	70b8                	ld	a4,96(s1)
     80203032:	098e                	slli	s3,s3,0x3
     80203034:	0000a797          	auipc	a5,0xa
-    80203038:	c0c78793          	addi	a5,a5,-1012 # 8020cc40 <sysnames>
+    80203038:	bd478793          	addi	a5,a5,-1068 # 8020cc08 <sysnames>
     8020303c:	99be                	add	s3,s3,a5
     8020303e:	7b34                	ld	a3,112(a4)
     80203040:	0009b603          	ld	a2,0(s3)
@@ -6819,12 +6819,12 @@ sys_sleep(void)
     802032ba:	06054763          	bltz	a0,80203328 <sys_sleep+0x8c>
   acquire(&tickslock);
     802032be:	0000b517          	auipc	a0,0xb
-    802032c2:	9ea53503          	ld	a0,-1558(a0) # 8020dca8 <_GLOBAL_OFFSET_TABLE_+0x38>
+    802032c2:	9b253503          	ld	a0,-1614(a0) # 8020dc70 <_GLOBAL_OFFSET_TABLE_+0x38>
     802032c6:	ffffd097          	auipc	ra,0xffffd
     802032ca:	402080e7          	jalr	1026(ra) # 802006c8 <acquire>
   ticks0 = ticks;
     802032ce:	0000b797          	auipc	a5,0xb
-    802032d2:	9f27b783          	ld	a5,-1550(a5) # 8020dcc0 <_GLOBAL_OFFSET_TABLE_+0x50>
+    802032d2:	9ba7b783          	ld	a5,-1606(a5) # 8020dc88 <_GLOBAL_OFFSET_TABLE_+0x50>
     802032d6:	0007a903          	lw	s2,0(a5)
   while(ticks - ticks0 < n){
     802032da:	fcc42783          	lw	a5,-52(s0)
@@ -6835,9 +6835,9 @@ sys_sleep(void)
     }
     sleep(&ticks, &tickslock);
     802032e0:	0000b997          	auipc	s3,0xb
-    802032e4:	9c89b983          	ld	s3,-1592(s3) # 8020dca8 <_GLOBAL_OFFSET_TABLE_+0x38>
+    802032e4:	9909b983          	ld	s3,-1648(s3) # 8020dc70 <_GLOBAL_OFFSET_TABLE_+0x38>
     802032e8:	0000b497          	auipc	s1,0xb
-    802032ec:	9d84b483          	ld	s1,-1576(s1) # 8020dcc0 <_GLOBAL_OFFSET_TABLE_+0x50>
+    802032ec:	9a04b483          	ld	s1,-1632(s1) # 8020dc88 <_GLOBAL_OFFSET_TABLE_+0x50>
     if(myproc()->killed){
     802032f0:	ffffe097          	auipc	ra,0xffffe
     802032f4:	784080e7          	jalr	1924(ra) # 80201a74 <myproc>
@@ -6856,7 +6856,7 @@ sys_sleep(void)
   }
   release(&tickslock);
     80203316:	0000b517          	auipc	a0,0xb
-    8020331a:	99253503          	ld	a0,-1646(a0) # 8020dca8 <_GLOBAL_OFFSET_TABLE_+0x38>
+    8020331a:	95a53503          	ld	a0,-1702(a0) # 8020dc70 <_GLOBAL_OFFSET_TABLE_+0x38>
     8020331e:	ffffd097          	auipc	ra,0xffffd
     80203322:	3fe080e7          	jalr	1022(ra) # 8020071c <release>
   return 0;
@@ -6872,7 +6872,7 @@ sys_sleep(void)
     80203336:	8082                	ret
       release(&tickslock);
     80203338:	0000b517          	auipc	a0,0xb
-    8020333c:	97053503          	ld	a0,-1680(a0) # 8020dca8 <_GLOBAL_OFFSET_TABLE_+0x38>
+    8020333c:	93853503          	ld	a0,-1736(a0) # 8020dc70 <_GLOBAL_OFFSET_TABLE_+0x38>
     80203340:	ffffd097          	auipc	ra,0xffffd
     80203344:	3dc080e7          	jalr	988(ra) # 8020071c <release>
       return -1;
@@ -6926,16 +6926,16 @@ sys_uptime(void)
 
   acquire(&tickslock);
     80203388:	0000b517          	auipc	a0,0xb
-    8020338c:	92053503          	ld	a0,-1760(a0) # 8020dca8 <_GLOBAL_OFFSET_TABLE_+0x38>
+    8020338c:	8e853503          	ld	a0,-1816(a0) # 8020dc70 <_GLOBAL_OFFSET_TABLE_+0x38>
     80203390:	ffffd097          	auipc	ra,0xffffd
     80203394:	338080e7          	jalr	824(ra) # 802006c8 <acquire>
   xticks = ticks;
     80203398:	0000b797          	auipc	a5,0xb
-    8020339c:	9287b783          	ld	a5,-1752(a5) # 8020dcc0 <_GLOBAL_OFFSET_TABLE_+0x50>
+    8020339c:	8f07b783          	ld	a5,-1808(a5) # 8020dc88 <_GLOBAL_OFFSET_TABLE_+0x50>
     802033a0:	4384                	lw	s1,0(a5)
   release(&tickslock);
     802033a2:	0000b517          	auipc	a0,0xb
-    802033a6:	90653503          	ld	a0,-1786(a0) # 8020dca8 <_GLOBAL_OFFSET_TABLE_+0x38>
+    802033a6:	8ce53503          	ld	a0,-1842(a0) # 8020dc70 <_GLOBAL_OFFSET_TABLE_+0x38>
     802033aa:	ffffd097          	auipc	ra,0xffffd
     802033ae:	372080e7          	jalr	882(ra) # 8020071c <release>
   return xticks;
@@ -13552,7 +13552,7 @@ static void read_entry_name(char *buffer, union dentry *d)
         if (c < 0x20 || strchr(illegal, c)) {
     802066ca:	49fd                	li	s3,31
     802066cc:	00007a17          	auipc	s4,0x7
-    802066d0:	58ca0a13          	addi	s4,s4,1420 # 8020dc58 <illegal.1646>
+    802066d0:	554a0a13          	addi	s4,s4,1364 # 8020dc20 <illegal.1646>
     802066d4:	02b9fe63          	bgeu	s3,a1,80206710 <formatname+0x74>
     802066d8:	8552                	mv	a0,s4
     802066da:	ffffa097          	auipc	ra,0xffffa
@@ -13851,7 +13851,7 @@ static void read_entry_name(char *buffer, union dentry *d)
             if (strchr(illegal, c) != NULL) {
     80206974:	85ca                	mv	a1,s2
     80206976:	00007517          	auipc	a0,0x7
-    8020697a:	2f250513          	addi	a0,a0,754 # 8020dc68 <illegal.1662>
+    8020697a:	2ba50513          	addi	a0,a0,698 # 8020dc30 <illegal.1662>
     8020697e:	ffffa097          	auipc	ra,0xffffa
     80206982:	050080e7          	jalr	80(ra) # 802009ce <strchr>
     80206986:	c119                	beqz	a0,8020698c <emake+0x238>
@@ -15816,7 +15816,7 @@ consoleinit(void)
   // to consoleread and consolewrite.
   devsw[CONSOLE].read = consoleread;
     802079ac:	00006797          	auipc	a5,0x6
-    802079b0:	32c7b783          	ld	a5,812(a5) # 8020dcd8 <_GLOBAL_OFFSET_TABLE_+0x68>
+    802079b0:	2f47b783          	ld	a5,756(a5) # 8020dca0 <_GLOBAL_OFFSET_TABLE_+0x68>
     802079b4:	00000717          	auipc	a4,0x0
     802079b8:	cd270713          	addi	a4,a4,-814 # 80207686 <consoleread>
     802079bc:	eb98                	sd	a4,16(a5)
@@ -16557,7 +16557,7 @@ uartputc_sync(int c)
 
   if(panicked){
     80207fc8:	00006797          	auipc	a5,0x6
-    80207fcc:	cb87b783          	ld	a5,-840(a5) # 8020dc80 <_GLOBAL_OFFSET_TABLE_+0x10>
+    80207fcc:	c807b783          	ld	a5,-896(a5) # 8020dc48 <_GLOBAL_OFFSET_TABLE_+0x10>
     80207fd0:	439c                	lw	a5,0(a5)
     80207fd2:	2781                	sext.w	a5,a5
     for(;;)
@@ -16683,7 +16683,7 @@ uartstart()
     8020809c:	630080e7          	jalr	1584(ra) # 802006c8 <acquire>
   if(panicked){
     802080a0:	00006797          	auipc	a5,0x6
-    802080a4:	be07b783          	ld	a5,-1056(a5) # 8020dc80 <_GLOBAL_OFFSET_TABLE_+0x10>
+    802080a4:	ba87b783          	ld	a5,-1112(a5) # 8020dc48 <_GLOBAL_OFFSET_TABLE_+0x10>
     802080a8:	439c                	lw	a5,0(a5)
     802080aa:	2781                	sext.w	a5,a5
     802080ac:	c391                	beqz	a5,802080b0 <uartputc+0x30>

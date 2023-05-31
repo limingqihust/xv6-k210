@@ -16,5 +16,5 @@
 #define FSSIZE       1000  // size of file system in blocks
 #define MAXPATH      260   // maximum file path name
 #define INTERVAL     (390000000 / 200) // timer interrupt interval
-
+// #define TEST
 #endif

@@ -16,7 +16,8 @@
         "stdarg.h": "c",
         "defs.h": "c",
         "sbi.h": "c",
-        "buf.h": "c"
+        "buf.h": "c",
+        "param.h": "c"
     },
     "cmake.configureOnOpen": false
 }

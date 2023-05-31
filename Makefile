@@ -1,6 +1,6 @@
 # platform	:= k210
 platform	:= qemu
-# mode := debug
+mode := debug
 mode := release
 K=kernel
 U=xv6-user
@@ -170,11 +170,11 @@ QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 # 	@$(QEMU) $(QEMUOPTS)
 # endif
 
-# 用于自己测试
-test:fs kernel-qemu
+# 用于自己测试 make test
+test:clean fs kernel-qemu
 	@$(QEMU) $(QEMUOPTS)
 
-# 供平台测试使用
+# 供平台测试使用 make all;make run
 
 all: clean kernel-qemu  
 
