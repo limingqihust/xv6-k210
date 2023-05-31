@@ -180,7 +180,7 @@ QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 
 
-all: build
+all: build 
 	@$(QEMU) $(QEMUOPTS)
 
 
