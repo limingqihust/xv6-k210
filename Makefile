@@ -61,9 +61,8 @@ OBJS += \
 
 endif
 
-#modiefied by lmq for test online 
+#modiefied by lmq for test online
 QEMU = qemu-system-riscv64          		# 7.0.0
-
 
 ifeq ($(platform), k210)
 RUSTSBI = ./bootloader/SBI/sbi-k210
@@ -104,14 +103,22 @@ ifeq ($(platform), qemu)
 linker = ./linker/qemu.ld
 endif
 
-# Compile Kernel
-$T/kernel: $(OBJS) $(linker) $U/initcode
-	@if [ ! -d "./target" ]; then mkdir target; fi
-	@$(LD) $(LDFLAGS) -T $(linker) -o $T/kernel $(OBJS)
-	@$(OBJDUMP) -S $T/kernel > $T/kernel.asm
-	@$(OBJDUMP) -t $T/kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $T/kernel.sym
+## Compile Kernel
+#$T/kernel: $(OBJS) $(linker) $U/initcode
+#	@if [ ! -d "./target" ]; then mkdir target; fi
+#	@$(LD) $(LDFLAGS) -T $(linker) -o $T/kernel $(OBJS)
+#	@$(OBJDUMP) -S $T/kernel > $T/kernel.asm
+#	@$(OBJDUMP) -t $T/kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $T/kernel.sym
 
-build: $T/kernel userprogs
+# Compile Kernel
+kernel-qemu: $(OBJS) $(linker) $U/initcode
+	@if [ ! -d "./target" ]; then mkdir target; fi
+	@$(LD) $(LDFLAGS) -T $(linker) -o kernel-qemu $(OBJS)
+	@$(OBJDUMP) -S kernel-qemu > kernel-qemu.asm
+	@$(OBJDUMP) -t kernel-qemu | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > kernel-qemu.sym
+
+
+build: kernel-qemu userprogs
 
 # Compile RustSBI
 RUSTSBI:
@@ -136,7 +143,7 @@ CPUS := 2
 endif
 
 # modified by lmq
-QEMUOPTS = -machine virt -kernel $T/kernel -m 128M -nographic
+QEMUOPTS = -machine virt -kernel kernel-qemu -m 128M -nographic
 # QEMUOPTS = -machine virt -kernel $T/kernel -m 8M -nographic
 
 # use multi-core 
@@ -147,8 +154,8 @@ QEMUOPTS += -smp $(CPUS)
 QEMUOPTS += -bios default
 
 # import virtual disk image
-# QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0 
-QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0 
+# QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
+QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 # 自己的
@@ -256,10 +263,12 @@ fs: $(UPROGS)
 	@for file in $$( ls $U/_* ); do \
 		sudo cp $$file $(dst)/$${file#$U/_};\
 		sudo cp $$file $(dst)/bin/$${file#$U/_}; done
+
 # added by lmq
 	@for file in 'ls $(TEST)';do\
 		sudo cp -r $(TEST)/$(file) $(dst)/$(file) ; done
 	@sudo umount $(dst)
+
 
 # Write mounted sdcard
 sdcard: userprogs
@@ -273,6 +282,7 @@ sdcard: userprogs
 clean: 
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
 	rm -f fs.img \
+	kernel-* \
 	*/*.o */*.d */*.asm */*.sym \
 	$T/* \
 	$U/initcode $U/initcode.out \

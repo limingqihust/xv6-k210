@@ -43,3 +43,4 @@ entry("sysinfo");
 entry("rename");
 # added by lmq
 entry("clone");
+entry("shutdown")

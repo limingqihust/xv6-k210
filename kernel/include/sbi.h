@@ -31,10 +31,11 @@
 	a0;							\
 })
 
+//copy
 static inline void SBI_CALL_NEW(int ext, int fid, unsigned long arg0,
-			unsigned long arg1, unsigned long arg2,
-			unsigned long arg3, unsigned long arg4,
-			unsigned long arg5)
+								unsigned long arg1, unsigned long arg2,
+								unsigned long arg3, unsigned long arg4,
+								unsigned long arg5)
 {
 	register uint64 a0 asm ("a0") = (uint64)(arg0);
 	register uint64 a1 asm ("a1") = (uint64)(arg1);
@@ -45,9 +46,9 @@ static inline void SBI_CALL_NEW(int ext, int fid, unsigned long arg0,
 	register uint64 a6 asm ("a6") = (uint64)(fid);
 	register uint64 a7 asm ("a7") = (uint64)(ext);
 	asm volatile ("ecall"
-		      : "+r" (a0), "+r" (a1)
-		      : "r" (a2), "r" (a3), "r" (a4), "r" (a5), "r" (a6), "r" (a7)
-		      : "memory");
+			: "+r" (a0), "+r" (a1)
+			: "r" (a2), "r" (a3), "r" (a4), "r" (a5), "r" (a6), "r" (a7)
+			: "memory");
 }
 
 
@@ -120,8 +121,9 @@ static inline void sbi_set_mie(void) {
 }
 
 static inline void start_hart(uint64 hartid,uint64 start_addr, uint64 a1) {
-    SBI_CALL_NEW(0x48534D, 0, hartid, start_addr, a1, 0, 0, 0);
+	SBI_CALL_NEW(0x48534D, 0, hartid, start_addr, a1, 0, 0, 0);
 }
+
 
 
 #endif

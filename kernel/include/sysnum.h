@@ -11,7 +11,7 @@
 #define SYS_exec        7
 #define SYS_fstat       8
 #define SYS_chdir       9
-#define SYS_dup         10
+#define SYS_dev         10
 #define SYS_getpid      11
 #define SYS_sbrk        12
 #define SYS_sleep       13
@@ -24,7 +24,7 @@
 #define SYS_mkdir       20
 #define SYS_close       21
 #define SYS_test_proc   22
-#define SYS_dev         513
+#define SYS_dup         23
 #define SYS_readdir     514
 #define SYS_getcwd      25
 #define SYS_rename      26
@@ -45,13 +45,20 @@
 #define SYS_mkdirat     34
 #define SYS_chdir_cscc  49
 #define SYS_getcwd_cscc 17
-#define SYS_dup_cscc    23
 #define SYS_dup3        24
 #define SYS_getdents64  61  
 #define SYS_fstat_cscc  80
+#define SYS_mount       40
+#define SYS_umount2     39
+
 
 // lzq
 #define SYS_brk         214
 #define SYS_munmap      215
 #define SYS_mmap        222
+#define SYS_shutdown    210
+
+// other
+#define SYS_uname       160
+#define SYS_gettimeofday 169
 #endif

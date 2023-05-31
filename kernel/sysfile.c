@@ -807,3 +807,17 @@ sys_fstat_cscc(void)
     return -1;
   return 0;
 }
+
+
+uint64
+sys_mount(void)
+{
+  return 0;
+}
+
+
+uint64 
+sys_umount2(void)
+{
+  return 0;
+}

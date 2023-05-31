@@ -3,6 +3,8 @@
 #include "kernel/include/types.h"
 #include "xv6-user/user.h"
 #include "kernel/include/fcntl.h"
+//lzq
+#include "kernel/include/sbi.h"
 
 // Parsed command representation
 #define EXEC  1
@@ -260,7 +262,7 @@ getcmd(char *buf, int nbuf)
 int
 main(void)
 {
-  static char buf[100];
+ static char buf[100];
   int fd;
 
   // Ensure that three file descriptors are open.
@@ -276,42 +278,58 @@ main(void)
   strcpy(envs[nenv].value, "/bin");
   nenv++;
 
-  getcwd(mycwd);
-  // Read and run input commands.
-  while(getcmd(buf, sizeof(buf)) >= 0){
-    replace(buf);
-    if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
-      // Chdir must be called by the parent, not the child.
-      buf[strlen(buf)-1] = 0;  // chop \n
-      if(chdir(buf+3) < 0)
-        fprintf(2, "cannot cd %s\n", buf+3);
-      getcwd(mycwd);
-    }
-    else{
-      struct cmd *cmd = parsecmd(buf);
-      struct execcmd *ecmd;
+  //added by lzq
+  // getcwd(mycwd);
+  // char testcmd[30][25] = {"riscv64/brk",
+  //                         "riscv64/fork",
+  //                         "riscv64/write",
+  //                         "riscv64/close"
+  //                         };
 
-      ecmd = (struct execcmd*)cmd;
-      if(ecmd->argv[0] == 0) {
-        free(cmd);
-        continue;
-      }
-      else if(!strcmp(ecmd->argv[0], "export"))
-      {
-        // Export must be called by the parent, not the child.
-        if(ecmd->argv[1] == NULL)
-          fprintf(2, "Usage: export [-p] [NAME=VALUE]\n");
-        else if(export(ecmd->argv) < 0)
-          fprintf(2, "export failed\n");
-        free(cmd);
-        continue;
-      }
-      else if(fork1() == 0) 
-        runcmd(cmd);
-      wait(0);
-      free(cmd);
-    }
-  }
+  // for(int i=0; i<4; i++){
+  //     struct cmd *cmd = parsecmd(testcmd[i]);
+  //     if(fork1() == 0){
+  //         runcmd(cmd);
+  //     }
+  //     wait(0);
+  //     free(cmd);
+  // }
+  // shutdown();
+ // Read and run input commands.
+ while(getcmd(buf, sizeof(buf)) >= 0){
+   replace(buf);
+   if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
+     // Chdir must be called by the parent, not the child.
+     buf[strlen(buf)-1] = 0;  // chop \n
+     if(chdir(buf+3) < 0)
+       fprintf(2, "cannot cd %s\n", buf+3);
+     getcwd(mycwd);
+   }
+   else{
+     struct cmd *cmd = parsecmd(buf);
+     struct execcmd *ecmd;
+
+     ecmd = (struct execcmd*)cmd;
+     if(ecmd->argv[0] == 0) {
+       free(cmd);
+       continue;
+     }
+     else if(!strcmp(ecmd->argv[0], "export"))
+     {
+       // Export must be called by the parent, not the child.
+       if(ecmd->argv[1] == NULL)
+         fprintf(2, "Usage: export [-p] [NAME=VALUE]\n");
+       else if(export(ecmd->argv) < 0)
+         fprintf(2, "export failed\n");
+       free(cmd);
+       continue;
+     }
+     else if(fork1() == 0)
+       runcmd(cmd);
+     wait(0);
+     free(cmd);
+   }
+ }
   exit(0);
 }
 

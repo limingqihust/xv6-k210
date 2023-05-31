@@ -118,8 +118,8 @@ extern uint64 sys_sysinfo(void);
 extern uint64 sys_rename(void);
 //added by lzq
 extern uint64 sys_brk(void);
-//extern uint64 sys_munmap(void);
 extern uint64 sys_mmap(void);
+extern uint64 sys_shutdown(void);
 
 // added by lmq
 extern uint64 sys_wait4(void);
@@ -132,6 +132,13 @@ extern uint64 sys_mkdirat(void);
 extern uint64 sys_dup3(void);
 extern uint64 sys_getdents64(void);
 extern uint64 sys_fstat_cscc(void);
+extern uint64 sys_mount(void);
+extern uint64 sys_umount2(void);
+
+
+// other
+extern uint64 sys_uname(void);
+extern uint64 sys_gettimeofday(void);
 
 static uint64 (*syscalls[])(void) = {
   [SYS_fork]        sys_fork,
@@ -143,7 +150,6 @@ static uint64 (*syscalls[])(void) = {
   [SYS_exec]        sys_exec,
   [SYS_fstat]       sys_fstat,
   [SYS_chdir]       sys_chdir,
-  [SYS_dup]         sys_dup,
   [SYS_getpid]      sys_getpid,
   [SYS_sbrk]        sys_sbrk,
   [SYS_sleep]       sys_sleep,
@@ -164,6 +170,7 @@ static uint64 (*syscalls[])(void) = {
   [SYS_brk]         sys_brk,
   [SYS_mmap]        sys_mmap,
 //  [SYS_munmap]      sys_munmap,
+  [SYS_shutdown]    sys_shutdown,
 
   // added by lmq
   [SYS_exit_cscc]     sys_exit,
@@ -181,10 +188,17 @@ static uint64 (*syscalls[])(void) = {
   [SYS_mkdirat]     sys_mkdirat,
   [SYS_chdir_cscc]  sys_chdir,
   [SYS_getcwd_cscc] sys_getcwd,
-  [SYS_dup_cscc]    sys_dup,
+  [SYS_dup]         sys_dup,
   [SYS_dup3]        sys_dup3,
   [SYS_getdents64]  sys_getdents64,
   [SYS_fstat_cscc]  sys_fstat_cscc,
+  [SYS_mount]       sys_mount,
+  [SYS_umount2]     sys_umount2,
+
+
+  // other
+  [SYS_uname]       sys_uname,
+  [SYS_gettimeofday] sys_gettimeofday,
   
 };
 
@@ -197,8 +211,9 @@ static char *sysnames[] = {
   [SYS_kill]        "kill",
   [SYS_exec]        "exec",
   [SYS_fstat]       "fstat",
-  [SYS_chdir]       "chdir",
   [SYS_dup]         "dup",
+  [SYS_chdir]       "chdir",
+  [SYS_dev]         "dev",
   [SYS_getpid]      "getpid",
   [SYS_sbrk]        "sbrk",
   [SYS_sleep]       "sleep",
@@ -233,10 +248,17 @@ static char *sysnames[] = {
   [SYS_mkdirat]     "mkdirat",
   [SYS_chdir_cscc]  "chdir",
   [SYS_getcwd_cscc] "getcwd",
-  [SYS_dup_cscc]    "dup",
   [SYS_dup3]        "dup3",
   [SYS_getdents64]  "getdents64",
   [SYS_fstat_cscc]  "fstat_cscc",
+  [SYS_shutdown]    "shutdown",
+  [SYS_mount]       "mount",
+  [SYS_umount2]     "umount2",
+
+
+  // other
+  [SYS_uname]       "uname",
+  [SYS_gettimeofday]  "gettimeofday",
 };
 
 void
@@ -246,6 +268,7 @@ syscall(void)
   struct proc *p = myproc();
 
   num = p->trapframe->a7;
+  // printf("syscall %d\n",num);
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
     p->trapframe->a0 = syscalls[num]();
         // trace

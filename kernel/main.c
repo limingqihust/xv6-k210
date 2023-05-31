@@ -63,6 +63,7 @@ main(unsigned long hartid, unsigned long dtb_pa)
     for(int i = 1; i < NCPU; i++) {
       unsigned long mask = 1 << i;
       sbi_send_ipi(&mask);
+      // added by lmq
       start_hart(i, (uint64)_entry, 0);
     }
     __sync_synchronize();

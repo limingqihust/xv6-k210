@@ -12,6 +12,7 @@
 #include "include/printf.h"
 //lzq
 #include "include/vm.h"
+#include "include/sbi.h"
 extern int exec(char *path, char **argv);
 
 uint64
@@ -202,6 +203,7 @@ sys_brk(void){
 
 uint64
 sys_mmap(void){
+    return 0;
     int addr;//映射起始位置，
     int len;
     int prot;// 映射的内存保护方式，可取：PROT_EXEC, PROT_READ, PROT_WRITE, PROT_NONE
@@ -298,3 +300,20 @@ sys_execve(void)
 
 }
 
+uint64 
+sys_shutdown(){
+    sbi_shutdown();
+    return 0;
+}
+
+uint64 
+sys_uname()
+{
+  return 0;
+}
+
+uint64 
+sys_gettimeofday()
+{
+  return 0;
+}
