@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "./test/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang-12",

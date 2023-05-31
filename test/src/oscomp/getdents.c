@@ -10,12 +10,12 @@ void test_getdents(void){
     dirp64 = buf;
     //fd = open(".", O_DIRECTORY);
     fd = open(".", O_RDONLY);
-    printf("open fd:%d\n", fd);
+    printf("open fd:%d\n", fd);             // 该目录的文件描述符要大于1
 
 	nread = getdents(fd, dirp64, 512);
-	printf("getdents fd:%d\n", nread);
+	printf("getdents fd:%d\n", nread);      // 读取的字节数大于1
 	assert(nread != -1);
-	printf("getdents success.\n%s\n", dirp64->d_name);
+	printf("getdents success.\n%s\n", dirp64->d_name);      // 名字要大于等于1
 
 	/*
 	for(int bpos = 0; bpos < nread;){

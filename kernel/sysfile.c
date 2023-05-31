@@ -727,9 +727,9 @@ struct linux_dirent64 {
 uint64 
 sys_getdents64(void)
 {
-  int fd,len;
+  int fd,len;                   // fd:要读取的目录的文件描述符
   struct file* f;
-  struct linux_dirent64* dirp64;
+  struct linux_dirent64* dirp64;// dirp64:存储信息的地址
 
   if(argfd(0,&fd,&f)<0 || argaddr(1,(uint64*)&dirp64)<0 || argint(2,&len))
   {
@@ -740,11 +740,17 @@ sys_getdents64(void)
   {
     return -1;
   }
-  if(copyout2((uint64)dirp64->d_name, f->ep->filename, filename_len) < 0 ||
-    copyout2((uint64)&(dirp64->d_type),(char*)&f->type,sizeof(f->type) < 0 ))
+  if(f->ep->parent==NULL)   // this direntry is root
+  {
+    if(copyout2((uint64)dirp64->d_name, "/", 1) < 0 ||
+      copyout2((uint64)&(dirp64->d_type),(char*)&f->type,sizeof(f->type) < 0 ))
+    return -1;
+  }
+  else if(copyout2((uint64)dirp64->d_name, f->ep->filename, filename_len) < 0 ||
+        copyout2((uint64)&(dirp64->d_type),(char*)&f->type,sizeof(f->type) < 0 ))
     return -1;
 
-  return filename_len;
+  return filename_len+sizeof(f->type);
 }
 
 
