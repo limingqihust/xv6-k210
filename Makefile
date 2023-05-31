@@ -154,11 +154,10 @@ QEMUOPTS += -smp $(CPUS)
 QEMUOPTS += -bios default
 
 # import virtual disk image
-# QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
-QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0
+QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
+# QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
-# 自己的
 # run: build
 # ifeq ($(platform), k210)
 # 	@$(OBJCOPY) $T/kernel --strip-all -O binary $(image)
@@ -171,17 +170,14 @@ QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 # 	@$(QEMU) $(QEMUOPTS)
 # endif
 
+# 用于自己测试
+test:fs kernel-qemu
+	@$(QEMU) $(QEMUOPTS)
 
-# 别人的
-# run:build
-# 	@make platform=qemu
-# 	@qemu-system-riscv64 -machine virt -kernel $T/kernel -m 128M -nographic -smp 2 -bios default -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0 -no-reboot
-
+# 供平台测试使用
 
 all: clean kernel-qemu  
 
-
-# 供调试使用
 run:
 	qemu-system-riscv64 -machine virt -kernel kernel-qemu -m 128M -nographic -smp 2 -bios default -drive file=sdcard.img,if=none,format=raw,id=x0  -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
@@ -284,7 +280,7 @@ sdcard: userprogs
 
 clean: 
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	rm -f  \
+	rm -f ./fs.img\
 	kernel-* \
 	*/*.o */*.d */*.asm */*.sym \
 	$T/* \
@@ -293,4 +289,6 @@ clean:
 	.gdbinit \
 	$U/usys.S \
 	$(UPROGS)
+
+
 
