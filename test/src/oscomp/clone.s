@@ -6,6 +6,7 @@
 
 .global __clone
 .type  __clone, %function
+# 函数指针 | 栈地址 | 标志位
 __clone:
 	# Save func and arg to stack
 	addi a1, a1, -16

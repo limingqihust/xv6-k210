@@ -163,11 +163,12 @@ sys_trace(void)
 uint64
 sys_clone(void)
 {
-  int flags,stack,ptid,tls,ctid;
+  int flags,ptid,tls,ctid;
+  uint64 stack;
   if(argint(0, &flags) < 0) {
     return -1;
   }
-  if(argint(1, &stack) < 0) {
+  if(argaddr(1, &stack) < 0) {    // 子进程的栈地址
     return -1;
   }
   if(argint(2, &ptid) < 0) {
@@ -179,9 +180,12 @@ sys_clone(void)
   if(argint(4, &ctid) < 0) {
     return -1;
   }
-
-  int new_pid=clone(flags,stack,ptid,tls,ctid);
-  return new_pid;
+  if(stack==0)
+  {
+    return fork();
+  }
+  else
+    return clone(flags,stack,ptid,tls,ctid);
 }
 
 // (maybe)sysmem.c, below is all the Memory-related Code
@@ -224,12 +228,6 @@ sys_mmap(void){
     return addr;
 }
 
-//uint64
-//sys_munmap(void){
-//    return  0;
-//}
-//  return clone(flags,stack,ptid,tls,ctid); ???
-//}
 
 // added by lmq for SYS_wait4
 uint64

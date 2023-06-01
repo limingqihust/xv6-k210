@@ -47,7 +47,7 @@ pid_t fork(void)
 {
     return syscall(SYS_clone, SIGCHLD, 0);
 }
-
+// 子进程执行的执行的函数指针 | 函数参数 | 栈地址 | 栈的大小 | 标志位
 pid_t clone(int (*fn)(void *arg), void *arg, void *stack, size_t stack_size, unsigned long flags)
 {
     if (stack)

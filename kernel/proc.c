@@ -1021,11 +1021,56 @@ procnum(void)
 
 
 // added by lmq for SYS_clone
-int clone(int flags, int stack, int ptid, int tls, int ctid)
+int clone(int flags, uint64 stack, int ptid, int tls, int ctid)
 {
-  int new_pid = fork();
-  return new_pid;
+  int i, pid;
+  struct proc *np;
+  struct proc *p = myproc();
+
+  // Allocate process.
+  if ((np = allocproc()) == NULL)
+  {
+    return -1;
+  }
+
+  // Copy user memory from parent to child.
+  if (uvmcopy(p->pagetable, np->pagetable, np->kpagetable, p->sz) < 0)
+  {
+    freeproc(np);
+    release(&np->lock);
+    return -1;
+  }
+  np->sz = p->sz;
+
+  np->parent = p;
+
+  // copy tracing mask from parent.
+  np->tmask = p->tmask;
+
+  // copy saved user registers.
+  *(np->trapframe) = *(p->trapframe);
+
+  // Cause fork to return 0 in the child.
+  np->trapframe->a0 = 0;
+  // printf("child stack is %d\n", stack);
+  np->trapframe->sp=stack;
+  // increment reference counts on open file descriptors.
+  for (i = 0; i < NOFILE; i++)
+    if (p->ofile[i])
+      np->ofile[i] = filedup(p->ofile[i]);
+  np->cwd = edup(p->cwd);
+
+  safestrcpy(np->name, p->name, sizeof(p->name));
+
+  pid = np->pid;
+
+  np->state = RUNNABLE;
+
+  release(&np->lock);
+
+  return pid;
 }
+
 
 // added by lmq for SYS_wait4
 /**
