@@ -61,7 +61,6 @@ OBJS += \
 
 endif
 
-#modiefied by lmq for test online
 QEMU = qemu-system-riscv64          		# 7.0.0
 
 ifeq ($(platform), k210)
@@ -148,7 +147,6 @@ endif
 
 # modified by lmq
 QEMUOPTS = -machine virt -kernel kernel-qemu -m 128M -nographic
-# QEMUOPTS = -machine virt -kernel $T/kernel -m 8M -nographic
 
 # use multi-core 
 QEMUOPTS += -smp $(CPUS)
@@ -159,7 +157,6 @@ QEMUOPTS += -bios default
 
 # import virtual disk image
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
-# QEMUOPTS += -drive file=sdcard.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 # run: build
@@ -290,9 +287,20 @@ clean:
 	$T/* \
 	$U/initcode $U/initcode.out \
 	$K/kernel \
-	.gdbinit \
 	$U/usys.S \
 	$(UPROGS)
 
 
+# added by lmq for debugging by gdb
+GDBPORT = $(shell expr `id -u` % 5000 + 25000)
 
+QEMUGDB = $(shell if $(QEMU) -help | grep -q '^-gdb'; \
+	then echo "-gdb tcp::$(GDBPORT)"; \
+	else echo "-s -p $(GDBPORT)"; fi)
+
+.gdbinit: .gdbinit.tmpl-riscv
+	sed "s/:1234/:$(GDBPORT)/" < $^ > $@
+
+qemu-gdb: kernel-qemu .gdbinit fs
+	@echo "*** Now run 'gdb' in another window." 1>&2
+	$(QEMU) $(QEMUOPTS) -S $(QEMUGDB)
