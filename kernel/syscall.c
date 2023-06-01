@@ -120,7 +120,8 @@ extern uint64 sys_rename(void);
 extern uint64 sys_brk(void);
 extern uint64 sys_mmap(void);
 extern uint64 sys_shutdown(void);
-
+extern uint64 sys_linkat(void);
+extern uint64 sys_unlink(void);
 // added by lmq
 extern uint64 sys_wait4(void);
 extern uint64 sys_clone(void);
@@ -171,9 +172,9 @@ static uint64 (*syscalls[])(void) = {
   // added by lzq
   [SYS_brk]         sys_brk,
   [SYS_mmap]        sys_mmap,
-//  [SYS_munmap]       sys_munmap,
   [SYS_shutdown]    sys_shutdown,
-
+  [SYS_linkat]      sys_linkat,
+  [SYS_unlink]      sys_unlink,
   // added by lmq
   [SYS_clone]       sys_clone,
   [SYS_wait4]       sys_wait4,
@@ -228,6 +229,8 @@ static char *sysnames[] = {
   [SYS_rename]      "rename",
   // added by lzq
   [SYS_brk]         "brk",
+  [SYS_linkat]      "linkat",
+  [SYS_unlink]      "unlink",
   // added by lmq
   [SYS_clone]       "clone",
   [SYS_wait4]       "wait4",

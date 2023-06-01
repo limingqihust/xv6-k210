@@ -49,7 +49,8 @@
 #define SYS_munmap      215
 #define SYS_mmap        222
 #define SYS_shutdown    210
-
+#define SYS_linkat      37
+#define SYS_unlink      35
 // wyx
 #define SYS_times       153
 #define SYS_uname       160
