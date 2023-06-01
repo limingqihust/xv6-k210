@@ -21,7 +21,3 @@ sdcard.img
 test/*
 .idea/*
 riscv64/*
-bootloader/*
-debug/*
-target/*
-xv6-user/*
