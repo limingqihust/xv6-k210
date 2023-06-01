@@ -1,7 +1,4 @@
 tags
-sdcard.img
-test/*
-sdcard_test/*
 xv6-user/_*
 xv6-user/*.d
 xv6-user/*.o
@@ -17,3 +14,14 @@ kernel/*.o
 kernel/include/*.back.h
 kernel/include/*.example.h
 target/*
+.gdbinit
+.gdbinit.tmpl-riscv
+.vscode/*
+sdcard.img
+test/*
+.idea/*
+riscv64/*
+bootloader/*
+debug/*
+target/*
+xv6-user/*
