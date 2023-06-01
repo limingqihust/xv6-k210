@@ -1,5 +1,7 @@
 tags
 sdcard.img
+test/*
+sdcard_test/*
 xv6-user/_*
 xv6-user/*.d
 xv6-user/*.o
