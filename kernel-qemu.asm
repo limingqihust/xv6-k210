@@ -12295,8 +12295,9 @@ sys_linkat(void){
     80205c90:	1141                	addi	sp,sp,-16
     80205c92:	e422                	sd	s0,8(sp)
     80205c94:	0800                	addi	s0,sp,16
-//    char path[FAT32_MAX_PATH];
 //    if(argstr(1, path, FAT32_MAX_PATH) < 0)
+//        return -1;
+//    if((ep = ename(path)) == NULL)
 //        return -1;
     return 0;
 }
@@ -12365,8 +12366,6 @@ sys_unlink(void){
     80205d20:	854a                	mv	a0,s2
     80205d22:	00001097          	auipc	ra,0x1
     80205d26:	394080e7          	jalr	916(ra) # 802070b6 <eput>
-//    printf("ep. = %s\n",ep->parent->filename);
-
     return 0;
     80205d2a:	4781                	li	a5,0
 }

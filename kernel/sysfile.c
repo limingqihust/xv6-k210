@@ -816,8 +816,13 @@ sys_fstat_cscc(void)
 // lzq link
 uint64
 sys_linkat(void){
-//    char path[FAT32_MAX_PATH];
+//    //先实现link，再适配
+//    char path[FAT32_MAX_PATH];// file
+//    char name[FAT32_MAX_FILENAME + 1];//dir name
+//    struct dirent *ep,*dp;
 //    if(argstr(1, path, FAT32_MAX_PATH) < 0)
+//        return -1;
+//    if((ep = ename(path)) == NULL)
 //        return -1;
     return 0;
 }
