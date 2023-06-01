@@ -85,7 +85,7 @@ CFLAGS += -I.
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
 # added by lmq for debug using fs.img
-# CFLAGS += -D TEST
+CFLAGS += -D TEST
 
 
 ifeq ($(mode), debug) 
@@ -172,7 +172,7 @@ QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 # endif
 
 # 用于自己测试 make test
-test:clean fs kernel-qemu
+test: clean fs kernel-qemu
 	@$(QEMU) $(QEMUOPTS)
 
 # 供平台测试使用 make all;make run

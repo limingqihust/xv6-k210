@@ -169,7 +169,6 @@ sys_open(void)
 
   if(argstr(0, path, FAT32_MAX_PATH) < 0 || argint(1, &omode) < 0)
     return -1;
-
   if(omode & O_CREATE){
     ep = create(path, T_FILE, omode);
     if(ep == NULL){
@@ -814,6 +813,33 @@ sys_fstat_cscc(void)
   return 0;
 }
 
+// lzq link
+uint64
+sys_linkat(void){
+//    char path[FAT32_MAX_PATH];
+//    if(argstr(1, path, FAT32_MAX_PATH) < 0)
+//        return -1;
+    return 0;
+}
+uint64
+sys_unlink(void){
+    char path[FAT32_MAX_PATH];// file
+    char name[FAT32_MAX_FILENAME + 1];//dir name
+    struct dirent *ep,*dp;
+    if(argstr(1, path, FAT32_MAX_PATH) < 0)
+        return -1;
+    if((ep = ename(path)) == NULL)
+        return -1;
+    if((dp = enameparent(path, name)) == NULL)
+        return -1;
+    elock(dp);
+    elock(ep);
+    eremove(ep);
+    eunlock(ep);
+    eunlock(dp);
+    eput(dp);
+    return 0;
+}
 
 uint64
 sys_mount(void)
