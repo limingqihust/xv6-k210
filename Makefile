@@ -7,8 +7,7 @@ U=xv6-user
 T=target
 
 # added by lmq
-# TEST=test/build/riscv64
-TEST=sdcard_test/
+TEST=test/build/riscv64
 
 OBJS =
 ifeq ($(platform), k210)
@@ -85,7 +84,7 @@ CFLAGS += -I.
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
 # added by lmq for debug using fs.img
-#CFLAGS += -D TEST
+CFLAGS += -D TEST
 
 
 ifeq ($(mode), debug) 

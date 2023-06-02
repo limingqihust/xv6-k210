@@ -95,5 +95,5 @@ void            test_proc_init(int);
 // added by lmq for SYS_wait4
 int             waitpid(int cpid,uint64 addr,int options);
 // added by lmq for SYS_clone
-int             clone(int flags,int stack,int ptid,int tls,int ctid);
+int             clone(int flags,uint64 stack,int ptid,int tls,int ctid);
 #endif
