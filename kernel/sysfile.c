@@ -885,14 +885,16 @@ sys_mount(void)
     //fstype， flags挂载参数， data传递给文件系统的字符串参数，可为NULL；
 
     //建立目标文件夹
-    struct dirent * dp;
+    struct dirent * dp, *devp;
     dp = create(dir, T_DIR, O_CREATE);
     if (dp == NULL || dp->attribute != ATTR_DIRECTORY) {
         eput(dp); // 指定的挂载点不存在或者不是目录
         return -1;
     }
+    devp = ename(special);
+    int major = devp->dev;
     //    struct fat *newfat;   理论上可能要给新设备加载文件系统？
-    int dev = open_dev(1, O_RDWR); //用作设备号(fd)
+    int dev = open_dev(major, O_RDWR); //用作设备号(fd)
     if (dev < 0)
         return -1;
     dp->dev = dev;
