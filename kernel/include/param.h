@@ -18,5 +18,5 @@
 #define FSSIZE       1000  // size of file system in blocks
 #define MAXPATH      260   // maximum file path name
 // modified by lmq for SYS_gettimeofday
-#define INTERVAL     (39000000 / 200) // timer interrupt interval
+#define INTERVAL     (100000000 / 200) // timer interrupt interval
 #endif

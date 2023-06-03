@@ -15,7 +15,7 @@ start:
     li      a0,0
     li      a7,SYS_dup
     ecall
-#==========test for brk==========
+#==========test for brk=========
     li      a7,SYS_fork
     ecall
     beq     a0,zero,run_brk
@@ -559,7 +559,6 @@ run_umount:
     li      a7,SYS_exit
     ecall
 done_umount:
-
     li      a7,SYS_shutdown
     ecall
 
@@ -632,7 +631,7 @@ test_munmap:
 .p2align 2
 argv_brk:
     .long test_brk
-    .long 0
+    .zero 12
 .p2align 2
 argv_chdir:
     .long test_chdir
