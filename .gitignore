@@ -19,6 +19,5 @@ target/*
 .gdbinit.tmpl-riscv
 .vscode/*
 sdcard.img
-test/*
 .idea/*
 riscv64/*

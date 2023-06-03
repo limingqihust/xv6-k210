@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/stddef.h
+
+../include/stdio.h
+
+../include/stdlib.h
+
+../include/string.h
+stddef.h
+../include/stddef.h
+
+../include/unistd.h
+stddef.h
+../include/stddef.h
+
+/home/lmq/Desktop/xv6-k210/test/src/oscomp/mount.c
+unistd.h
+/home/lmq/Desktop/xv6-k210/test/src/oscomp/unistd.h
+stdio.h
+/home/lmq/Desktop/xv6-k210/test/src/oscomp/stdio.h
+stdlib.h
+/home/lmq/Desktop/xv6-k210/test/src/oscomp/stdlib.h
+string.h
+/home/lmq/Desktop/xv6-k210/test/src/oscomp/string.h
+
