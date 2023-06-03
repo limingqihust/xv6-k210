@@ -119,6 +119,7 @@ extern uint64 sys_rename(void);
 //added by lzq
 extern uint64 sys_brk(void);
 extern uint64 sys_mmap(void);
+extern uint64 sys_munmap(void);
 extern uint64 sys_shutdown(void);
 extern uint64 sys_linkat(void);
 extern uint64 sys_unlink(void);

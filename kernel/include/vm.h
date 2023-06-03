@@ -33,4 +33,7 @@ int             copyin2(char *dst, uint64 srcva, uint64 len);
 int             copyinstr2(char *dst, uint64 srcva, uint64 max);
 void            vmprint(pagetable_t pagetable);
 
+// added by lmq for SYS_mmap
+pte_t *         walk(pagetable_t pagetable, uint64 va, int alloc);
+
 #endif 

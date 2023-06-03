@@ -310,6 +310,7 @@ static int reloc_clus(struct dirent *entry, uint off, int alloc)
 
 /* like the original readi, but "reade" is odd, let alone "writee" */
 // Caller must hold entry->lock.
+// 文件的entry |   | 读取的目标缓冲区 | 读取文件内容的起始位置 | 读取的字节数
 int eread(struct dirent *entry, int user_dst, uint64 dst, uint off, uint n)
 {
     if (off > entry->file_size || off + n < off || (entry->attribute & ATTR_DIRECTORY)) {
@@ -932,4 +933,26 @@ struct dirent *ename(char *path)
 struct dirent *enameparent(char *path, char *name)
 {
     return lookup_path(path, 1, name);
+}
+
+
+/**
+ * added by lmq for SYS_mmap
+ * 获取映射文件的物理地址
+ * ep:      映射文件的第一个entry
+ * off:     映射文件的偏移 这里先默认为0
+ * len:     映射文件的长度
+*/
+uint64 get_pa_of_entry(struct dirent* ep,int off,int len)
+{
+    // 定位到映射文件的目标簇 
+    reloc_clus(ep, off, 0);
+    struct buf *bp;
+    // 获得目标簇中要读取的扇区号
+    uint sec = first_sec_of_clus(ep->cur_clus) + off / fat.bpb.byts_per_sec;
+    bp = bread(0, sec);
+    uint64 pa=(uint64)bp->data;
+    brelse(bp);
+    // printf("get_pa_of_entry: bp->data = %s\n",bp->data);
+    return pa;
 }

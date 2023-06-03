@@ -72,4 +72,7 @@ struct dirent*  enameparent(char *path, char *name);
 int             eread(struct dirent *entry, int user_dst, uint64 dst, uint off, uint n);
 int             ewrite(struct dirent *entry, int user_src, uint64 src, uint off, uint n);
 
+
+// added by lmq for SYS_mmap
+uint64          get_pa_of_entry(struct dirent* ep, int off,int len);
 #endif

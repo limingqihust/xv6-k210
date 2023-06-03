@@ -858,3 +858,63 @@ sys_umount2(void)
 {
   return 0;
 }
+
+
+// added by lmq for SYS_mmap
+uint64
+sys_mmap(void){
+    return 0;
+    uint64 addr;    // 映射起始位置
+    int len;        // 映射的长度
+    int prot;       // 映射的内存保护方式，可取：PROT_EXEC, PROT_READ, PROT_WRITE, PROT_NONE
+    int flags;      // 映射是否与其他进程共享的标志，
+    int fd;         // 被映射的文件句柄，
+    int off;        // 文件偏移量；
+
+    struct file *f;
+    if(argaddr(0, &addr) < 0 || argint(1, &len) < 0 || argint(2, &prot) < 0 ||
+       argint(3, &flags) < 0 || argfd(4, &fd, &f) < 0 || argint(5, &off) < 0)
+        return -1;
+
+    if(len>PGSIZE)
+    {
+      panic("mmap: len > PGSIZE");
+    }
+
+    // 获取虚拟地址
+    uint64 va=0;
+
+    if(addr==NULL)
+    {
+      va = myproc()->sz;
+      myproc()->sz+=PGSIZE;
+    }
+    else
+    {
+      va=addr;
+    }
+
+    // 获取物理地址
+    uint64 pa=0;
+    if(f->type!=FD_ENTRY)
+    {
+      panic("mmap: f->type!=FD_ENTRY");
+    }
+    struct dirent* ep=f->ep;
+    pa=get_pa_of_entry(ep,off,len);
+    printf("%s\n",pa);
+    if(mappages(myproc()->pagetable,va,PGSIZE, pa, PTE_W|PTE_X|PTE_R|PTE_U) != 0)
+      return -1;
+    printf("%d\n",walkaddr(myproc()->pagetable,va));
+    return pa;
+}
+
+
+// added by lmq for SYS_munmap
+uint64
+sys_munmap(void)
+{
+
+
+  return 0;
+}

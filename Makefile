@@ -1,6 +1,6 @@
 # platform	:= k210
 platform	:= qemu
-mode := debug
+# mode := debug
 mode := release
 K=kernel
 U=xv6-user
@@ -84,11 +84,11 @@ CFLAGS += -I.
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
 # added by lmq for debug using fs.img
-#CFLAGS += -D TEST
+# CFLAGS += -D TEST
 
 
 ifeq ($(mode), debug) 
-CFLAGS += -DDEBUG 
+CFLAGS += -D DEBUG 
 endif 
 
 ifeq ($(platform), qemu)
