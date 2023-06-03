@@ -845,15 +845,64 @@ sys_unlink(void){
     eput(dp);
     return 0;
 }
+//lzq mount
+// 建立设备文件 内核态应该以 主设备号 ：副设备号 管理设备即（设备类型，该类型第几个设备）
+uint64
+open_dev(int major, int omode)
+{
+    int fd;
+//    int minor;
+    struct file *f;
+//    if(omode & O_CREATE){
+//        panic("dev file on FAT");
+//    }
+    if(major < 0 || major >= NDEV)
+        return -1;
 
+    if((f = filealloc()) == NULL || (fd = fdalloc(f)) < 0){
+        if(f)
+            fileclose(f);
+        return -1;
+    }
+
+    f->type = FD_DEVICE;
+    f->off = 0;
+    f->ep = 0;
+    f->major = major;
+    f->readable = !(omode & O_WRONLY);
+    f->writable = (omode & O_WRONLY) || (omode & O_RDWR);
+
+    return fd;
+}
+// test mount 1 /dev/vda2 /mnt
 uint64
 sys_mount(void)
 {
-  return 0;
+    char special[FAT32_MAX_PATH];
+    char dir[FAT32_MAX_PATH]; //挂载设备,挂载点,挂载的文件系统类型
+    if (argstr(0, special, FAT32_MAX_PATH) < 0 || argstr(1, dir, FAT32_MAX_PATH) < 0)
+        return -1;
+    //fstype， flags挂载参数， data传递给文件系统的字符串参数，可为NULL；
+
+    //建立目标文件夹
+    struct dirent * dp, *devp;
+    dp = create(dir, T_DIR, O_CREATE);
+    if (dp == NULL || dp->attribute != ATTR_DIRECTORY) {
+        eput(dp); // 指定的挂载点不存在或者不是目录
+        return -1;
+    }
+    devp = ename(special);
+    int major = devp->dev;
+    //    struct fat *newfat;   理论上可能要给新设备加载文件系统？
+    int dev = open_dev(major, O_RDWR); //用作设备号(fd)
+    if (dev < 0)
+        return -1;
+    dp->dev = dev;
+    dp->parent = dp;
+    dp->valid = 1;
+    return 0;
 }
-
-
-uint64 
+uint64
 sys_umount2(void)
 {
   return 0;
@@ -914,7 +963,18 @@ sys_mmap(void){
 uint64
 sys_munmap(void)
 {
-
-
+  char special[FAT32_MAX_PATH];
+  if (argstr(0, special, FAT32_MAX_PATH) < 0)
+      return -1;
+  struct dirent * dp, * ep;
+  char parent_name[FAT32_MAX_FILENAME + 1];
+  ep = ename(special);
+  dp = enameparent(special, parent_name);
+  elock(dp);
+  elock(ep);
+  eremove(ep); //是不是应该递归删除所有entry？
+  eunlock(ep);
+  eunlock(dp);
+  eput(dp);
   return 0;
 }
