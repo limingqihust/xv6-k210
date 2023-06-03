@@ -905,9 +905,18 @@ sys_mount(void)
 uint64
 sys_umount2(void)
 {
-//    char special[FAT32_MAX_PATH];
-//    if (argstr(0, special, FAT32_MAX_PATH) < 0)
-//        return -1;
-
+    char special[FAT32_MAX_PATH];
+    if (argstr(0, special, FAT32_MAX_PATH) < 0)
+        return -1;
+    struct dirent * dp, * ep;
+    char parent_name[FAT32_MAX_FILENAME + 1];
+    ep = ename(special);
+    dp = enameparent(special, parent_name);
+    elock(dp);
+    elock(ep);
+    eremove(ep); //是不是应该递归删除所有entry？
+    eunlock(ep);
+    eunlock(dp);
+    eput(dp);
     return 0;
 }
