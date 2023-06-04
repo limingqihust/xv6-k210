@@ -190,6 +190,7 @@ static uint64 (*syscalls[])(void) = {
   [SYS_fstat_cscc]  sys_fstat_cscc,
   [SYS_mount]       sys_mount,
   [SYS_umount2]     sys_umount2,
+  [SYS_munmap]      sys_munmap,
 
 
   // added by wyx
@@ -246,6 +247,8 @@ static char *sysnames[] = {
   [SYS_shutdown]    "shutdown",
   [SYS_mount]       "mount",
   [SYS_umount2]     "umount2",
+  [SYS_munmap]      "munmap",
+  [SYS_mmap]        "mmap",
 
 
   // added by wyx

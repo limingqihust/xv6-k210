@@ -41,6 +41,18 @@ extern struct cpu cpus[NCPU];
 
 enum procstate { UNUSED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
+// added by lmq for SYS_mmap
+#define VMA_MAX 16
+struct VMA{
+  int valid;    // 有效位
+  uint64 addr;  // 起始地址
+  int len;      // 长度
+  int prot;     // 权限 可读/可写/可读可写
+  int flags;    // 区域类型 共享/私有
+  int off;      // 在文件中的偏移量
+  struct file* f; // 映射到的文件
+  uint64 mapcnt;  // 映射的页数
+};
 // Per-process state
 struct proc {
   struct spinlock lock;
@@ -64,6 +76,10 @@ struct proc {
   struct dirent *cwd;          // Current directory
   char name[16];               // Process name (debugging)
   int tmask;                    // trace mask
+
+  // added by lmq for SYS_mmap
+  struct VMA vma[VMA_MAX];     // 虚拟内存区域
+  uint64 maxaddr;
 };
 
 void            reg_info(void);

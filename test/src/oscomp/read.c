@@ -6,6 +6,7 @@ void test_read() {
 	TEST_START(__func__);
 	int fd = open("./text.txt", O_RDWR | O_CREATE);
 	char buf[256];
+	printf("buf:%p\n",buf);
 	int size = read(fd, buf, 256);
 	assert(size >= 0);
 

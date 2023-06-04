@@ -12,6 +12,10 @@
 #include "include/console.h"
 #include "include/timer.h"
 #include "include/disk.h"
+// added by lmq for SYS_mmap
+// #include "include/kalloc.h"
+// #include "include/vm.h"
+#include "include/defs.h"
 
 extern char trampoline[], uservec[], userret[];
 
@@ -77,6 +81,30 @@ usertrap(void)
     intr_on();
     syscall();
   } 
+  // added by lmq for SYS_mmap
+  else if(r_scause()==0xd)
+  {
+    // 发生缺页中断
+    uint64 va=r_stval();    // 发生缺页中断的地址
+    struct VMA* v=0;
+    // 寻找可利用的vma
+    for(int i=0;i<VMA_MAX;i++)
+    {
+      if(p->vma[i].addr <= va && va <= p->vma[i].addr+p->vma[i].len-1  && p->vma[i].valid)
+      {
+        v=p->vma+i;
+        break;
+      }
+    }
+    if(!v) panic("usertrap : no available vma found\n");
+
+    // 申请物理内存 建立映射
+    uint64 pa=(uint64)kalloc();       // 物理地址
+    memset((void*)pa,0,PGSIZE);
+    if(mappages(p->pagetable, v->addr, PGSIZE, pa, v->prot) != 0)
+      panic("mmap: mappages user pagetable error\n");
+    eread(v->f->ep,1,v->addr,v->off,v->len);
+  }
   else if((which_dev = devintr()) != 0){
     // ok
   } 

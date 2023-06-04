@@ -13,7 +13,7 @@ static struct kstat kst;
 void test_munmap(void){
     TEST_START(__func__);
     char *array;
-    const char *str = "  Hello, mmap successfully!";
+    const char *str = "  Hello, mmap successfully! lmq";
     int fd;
 
     fd = open("test_mmap.txt", O_RDWR | O_CREATE);
@@ -23,17 +23,20 @@ void test_munmap(void){
     array = mmap(NULL, kst.st_size, PROT_WRITE | PROT_READ, MAP_FILE | MAP_SHARED, fd, 0);
     //printf("return array: %x\n", array);
 
-    if (array == MAP_FAILED) {
-	printf("mmap error.\n");
-    }else{
-	//printf("mmap content: %s\n", array);
+    if (array == MAP_FAILED) 
+    {
+	    printf("mmap error.\n");
+    }
+    else
+    {
+	    printf("mmap content: %s\n", array);
 
     	int ret = munmap(array, kst.st_size);
-	printf("munmap return: %d\n",ret);
-	assert(ret == 0);
+        printf("munmap return: %d\n",ret);
+        assert(ret == 0);
 
-	if (ret == 0)
-		printf("munmap successfully!\n");
+        if (ret == 0)
+            printf("munmap successfully!\n");
     }
     close(fd);
 

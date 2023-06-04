@@ -20,6 +20,7 @@
 #include "include/string.h"
 #include "include/printf.h"
 #include "include/vm.h"
+#include "include/kalloc.h"
 
 
 // Fetch the nth word-sized system call argument as a file descriptor
@@ -908,73 +909,97 @@ sys_umount2(void)
   return 0;
 }
 
-
 // added by lmq for SYS_mmap
 uint64
-sys_mmap(void){
-    return 0;
-    uint64 addr;    // 映射起始位置
-    int len;        // 映射的长度
-    int prot;       // 映射的内存保护方式，可取：PROT_EXEC, PROT_READ, PROT_WRITE, PROT_NONE
-    int flags;      // 映射是否与其他进程共享的标志，
-    int fd;         // 被映射的文件句柄，
-    int off;        // 文件偏移量；
-
-    struct file *f;
-    if(argaddr(0, &addr) < 0 || argint(1, &len) < 0 || argint(2, &prot) < 0 ||
-       argint(3, &flags) < 0 || argfd(4, &fd, &f) < 0 || argint(5, &off) < 0)
-        return -1;
-
-    if(len>PGSIZE)
-    {
-      panic("mmap: len > PGSIZE");
-    }
-
-    // 获取虚拟地址
-    uint64 va=0;
-
-    if(addr==NULL)
-    {
-      va = myproc()->sz;
-      myproc()->sz+=PGSIZE;
-    }
-    else
-    {
-      va=addr;
-    }
-
-    // 获取物理地址
-    uint64 pa=0;
-    if(f->type!=FD_ENTRY)
-    {
-      panic("mmap: f->type!=FD_ENTRY");
-    }
-    struct dirent* ep=f->ep;
-    pa=get_pa_of_entry(ep,off,len);
-    printf("%s\n",pa);
-    if(mappages(myproc()->pagetable,va,PGSIZE, pa, PTE_W|PTE_X|PTE_R|PTE_U) != 0)
+sys_mmap(void)
+{
+  uint64 addr;    // 映射起始位置
+  int len;        // 映射的长度
+  int prot;       // 映射的内存保护方式，可取：PROT_EXEC, PROT_READ, PROT_WRITE, PROT_NONE
+  int flags;      // 映射是否与其他进程共享的标志，
+  int fd;         // 被映射的文件句柄，
+  int off;        // 文件偏移量；
+  
+  if(argaddr(0, &addr) < 0 || argint(1, &len) < 0 || argint(2, &prot) < 0 ||
+      argint(3, &flags) < 0 || argint(4, &fd) < 0 || argint(5, &off) < 0)
       return -1;
-    printf("%d\n",walkaddr(myproc()->pagetable,va));
-    return pa;
-}
+  
+  
+  struct proc* p=myproc();
+  struct file* f=p->ofile[fd];
+  // 检查权限是否非法
+  if(!f->writable && (prot&PROT_WRITE) && !(flags & MAP_PRIVATE)) 
+    panic("mmap: prot illegal");
+  if(!f->readable && (prot&PROT_READ))
+    panic("mmap: prot illegal");
 
+  int available_vma_idx=-1;
+  for(int i=0;i<VMA_MAX;i++)
+  {
+    if(p->vma[i].valid==0)
+    {
+      available_vma_idx=i;
+      break;
+    }
+  }
+  if(available_vma_idx==-1)
+    panic("do not have enough vma\n");
+  struct VMA* v=p->vma+available_vma_idx;
+
+  v->valid=1;                       // 有效位
+  v->len=len;                       // 映射长度
+  p->maxaddr-=PGROUNDUP(len);
+  v->addr=p->maxaddr;               // 虚拟内存的虚拟地址
+  v->prot=0;                        // 权限 可读/可写/可读可写
+  if(prot & PROT_READ)
+    v->prot |= PTE_R;
+  if(prot & PROT_WRITE)
+    v->prot |= PTE_W;
+  if(prot & PROT_EXEC)
+    v->prot |= PTE_X;
+  v->prot |= (PTE_V | PTE_U);                
+  v->flags=flags;                   // 标志位 共享/私有
+  v->off=off;                       // 文件偏移量
+  v->f=f;                           // 文件描述符
+  filedup(f);                       // 增加文件引用计数
+  // uint64 pa=(uint64)kalloc();       // 物理地址
+  // memset((void*)pa,0,PGSIZE);
+  // if(mappages(p->pagetable, v->addr, PGSIZE, pa, PTE_V | PTE_U | PTE_A | PTE_W | PTE_R | PTE_D) != 0)
+  //   panic("mmap: mappages user pagetable error\n");
+  // eread(v->f->ep,1,v->addr,v->off,v->len);
+
+  return v->addr;
+}
 
 // added by lmq for SYS_munmap
 uint64
 sys_munmap(void)
 {
-  char special[FAT32_MAX_PATH];
-  if (argstr(0, special, FAT32_MAX_PATH) < 0)
-      return -1;
-  struct dirent * dp, * ep;
-  char parent_name[FAT32_MAX_FILENAME + 1];
-  ep = ename(special);
-  dp = enameparent(special, parent_name);
-  elock(dp);
-  elock(ep);
-  eremove(ep); //是不是应该递归删除所有entry？
-  eunlock(ep);
-  eunlock(dp);
-  eput(dp);
+  uint64 addr;
+  int len;
+  if(argaddr(0, &addr) < 0 || argint(1, &len) < 0)
+    return -1;
+  struct proc* p=myproc();
+  struct VMA* v=0;
+  for(int i=0;i<VMA_MAX;i++)
+  {
+    if(p->vma[i].valid && p->vma[i].addr==addr)
+    {
+      v=p->vma+i;
+    }
+  }
+  if(!v)
+    panic("munmap: wrong!can not find the vma\n");
+  
+  if(walkaddr(p->pagetable,v->addr)!=0)
+  {
+    if( v->flags & MAP_SHARED )
+      ewrite(v->f->ep, 1, v->addr, v->off, v->len);                  // 写回文件
+    vmunmap( p->pagetable , v->addr , PGROUNDUP(v->len)/PGSIZE , 1 );   //unmap
+  }
+
+  fileclose(v->f);
+  v->valid=0;
   return 0;
 }
+
