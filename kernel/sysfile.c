@@ -948,8 +948,10 @@ sys_mmap(void)
 
   v->valid=1;                       // 有效位
   v->len=len;                       // 映射长度
-  p->maxaddr-=PGROUNDUP(len);
+  // p->maxaddr-=PGROUNDUP(len);
+  
   v->addr=p->maxaddr;               // 虚拟内存的虚拟地址
+  p->maxaddr-=len;
   v->prot=0;                        // 权限 可读/可写/可读可写
   if(prot & PROT_READ)
     v->prot |= PTE_R;
@@ -962,11 +964,7 @@ sys_mmap(void)
   v->off=off;                       // 文件偏移量
   v->f=f;                           // 文件描述符
   filedup(f);                       // 增加文件引用计数
-  // uint64 pa=(uint64)kalloc();       // 物理地址
-  // memset((void*)pa,0,PGSIZE);
-  // if(mappages(p->pagetable, v->addr, PGSIZE, pa, PTE_V | PTE_U | PTE_A | PTE_W | PTE_R | PTE_D) != 0)
-  //   panic("mmap: mappages user pagetable error\n");
-  // eread(v->f->ep,1,v->addr,v->off,v->len);
+
 
   return v->addr;
 }
@@ -986,6 +984,7 @@ sys_munmap(void)
     if(p->vma[i].valid && p->vma[i].addr==addr)
     {
       v=p->vma+i;
+      break;
     }
   }
   if(!v)

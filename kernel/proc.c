@@ -177,7 +177,7 @@ found:
     p->vma[i].valid=0;
     p->vma[i].mapcnt=0;
   }
-  p->maxaddr=MAXVA-2*PGSIZE;
+  p->maxaddr=MAXVA-3*PGSIZE;
   return p;
 }
 
@@ -562,8 +562,13 @@ int fork(void)
   // added by lmq for SYS_mmap
   for(int i=0;i<VMA_MAX;i++)
   {
-    
+    if(p->vma[i].valid)
+    {
+      memmove(np->vma+i,p->vma+i,sizeof(struct VMA));
+      filedup(p->vma[i].f);
+    }
   }
+  np->maxaddr=p->maxaddr;
 
   safestrcpy(np->name, p->name, sizeof(p->name));
 
@@ -610,8 +615,8 @@ void exit(int status)
 {
   struct proc *p = myproc();
 
-//  if (p == initproc)
-//    panic("init exiting");
+ if (p == initproc)
+   panic("init exiting");
 
   // Close all open files.
   for (int fd = 0; fd < NOFILE; fd++)
@@ -623,6 +628,26 @@ void exit(int status)
       p->ofile[fd] = 0;
     }
   }
+
+
+  // added for SYS_mmap
+  for(int i=0;i<VMA_MAX;i++)
+  {
+    if(p->vma[i].valid)
+    {
+      for(uint64 addr=p->vma[i].addr;addr<p->vma[i].addr+p->vma[i].len;addr+=PGSIZE)
+      {
+        if(walkaddr(p->pagetable,addr)!=0)
+        {
+          vmunmap(p->pagetable,addr,1,1);
+        }
+      }
+      filewrite(p->vma[i].f,p->vma[i].addr,p->vma[i].len);
+      fileclose(p->vma[i].f);
+      p->vma[i].valid=0;
+    }
+  }
+
 
   eput(p->cwd);
   p->cwd = 0;
