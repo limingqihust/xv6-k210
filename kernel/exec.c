@@ -156,7 +156,7 @@ int exec(char *path, char **argv)
   p->kpagetable = kpagetable;
   p->sz = sz;
   p->trapframe->epc = elf.entry;  // initial program counter = main
-  p->trapframe->sp = sp; // initial stack pointer
+  p->trapframe->sp = sp-8; // initial stack pointer
   proc_freepagetable(oldpagetable, oldsz);
   w_satp(MAKE_SATP(p->kpagetable));
   sfence_vma();
