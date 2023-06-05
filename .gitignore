@@ -15,9 +15,10 @@ kernel/*.o
 kernel/include/*.back.h
 kernel/include/*.example.h
 target/*
-# .gdbinit
-# .gdbinit.tmpl-riscv
+.gdbinit
+.gdbinit.tmpl-riscv
 .vscode/*
 sdcard.img
 .idea/*
 riscv64/*
+test
